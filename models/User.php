@@ -42,11 +42,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['id'], 'required'],
-            [['id', 'isVerfied', 'money', 'audit_school', 'reg_school', 'school'], 'integer'],
+            [['isVerfied', 'money', 'audit_school', 'reg_school', 'school'], 'integer'],
             [['register_time'], 'safe'],
             [['username', 'email', 'password', 'sex', 'degree', 'headimage', 'tel', 'idcard_upside', 'idcard_downside', 'verifyCode'], 'string', 'max' => 255],
-            [['id'], 'unique'],
         ];
     }
 
@@ -105,13 +103,14 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return static::find()->where(['username'=>$username])->one();
     }
+    
+    public static function findByEmail($email)
+    {
+        return static::find()->where(['email'=>$email])->one();
+    }
 
     public function validatePassword($password)
     {
-        if($password == $this->password)
-        {
-            return true;
-        }
-        return false;
+        return password_verify($password,$this->password);//哈希比较，输入的密码与数据库中的哈希加密过的密码进行比较。
     }
 }

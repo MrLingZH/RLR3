@@ -9,6 +9,10 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\RegisterForm;
+use app\models\RegisterForm2;
+use app\models\User;
+use app\models\School;
 
 class SiteController extends Controller
 {
@@ -124,5 +128,63 @@ class SiteController extends Controller
     public function actionAbout()
     {
         return $this->render('about');
+    }
+
+    public function actionRegister()
+    {
+        $model = new RegisterForm;
+
+        if($model->load(Yii::$app->request->post()))
+        {
+            //查询该邮箱用户是否存在，如果存在且验证状态为1，则已被注册。
+            $user = User::findByEmail($model->email);;
+            if($user)
+            {
+                if($user->isVerfied == 1)
+                {
+                    return $this->render('registerfailed');
+                }
+            }
+            //如果该邮箱用户不存在，则添加到用户表，并生成验证码
+            if($user == null)
+            {
+                $user = new User;
+                $user->email = $model->email;
+                $user->isVerfied = 0;
+                $user->verifyCode = $model->getVerifyCode();
+                $user->save();
+            }
+
+            return $this->redirect(['site/register2','email'=>$model->email]);//执行本控制器中的Actionregister2,并将email传过去
+        }
+        return $this->render('register',[
+            'model'=>$model,
+        ]);
+    }
+
+    public function actionRegister2()
+    {
+        $model = new RegisterForm2;
+
+        if($model->load(Yii::$app->request->post()) && $model->register())
+        {
+            $model->email = Yii::$app->request->get('email');//redirect实现控制器间的转跳，但method只能是get
+            $user = User::findByEmail($model->email);
+            $user->username = $model->username;
+            $user->password = password_hash($model->password, PASSWORD_DEFAULT);//给密码进行哈希加密
+            $user->reg_school = $model->schoolid;
+            $user->tel = $model->tel;
+            $user->isVerfied = 1;//1表示已验证
+            $user->save();
+
+            return $this->render('registersucceed');
+        }
+
+        $allschool = School::findAllSchool();
+
+        return $this->render('register2',[
+            'model'=>$model,
+            'allschool'=>$allschool,
+        ]);
     }
 }

@@ -31,6 +31,7 @@ class LoginForm extends Model
             // rememberMe must be a boolean value
             ['rememberMe', 'boolean'],
             // password is validated by validatePassword()
+            // 下面这条验证规则是在执行继承自Model的validate()时执行validatePasswo()
             ['password', 'validatePassword'],
         ];
     }
