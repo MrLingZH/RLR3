@@ -26,13 +26,35 @@ $config = [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        'mailer' => [
+        /*'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
             // send all mails to a file by default. You have to set
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
-            'useFileTransport' => true,
+            'useFileTransport' => true,*/
+
+        //邮件发送配置
+
+        'mailer' => [
+            'class' => 'yii\swiftmailer\Mailer',
+            //'viewPath' => '@common/mail',
+            'useFileTransport' =>false,//这句一定有，false发送邮件，true只是生成邮件在runtime文件夹下，不发邮件
+            'transport' => [
+                'class' => 'Swift_SmtpTransport',
+                'host' => 'smtp.qq.com',  //每种邮箱的host配置不一样
+                'username' => '1608030398@qq.com', //你的邮箱
+                'password' => 'chmdwkottgjujieg', //QQ邮箱的IMAP/TMP授权密码
+                'port' => '465',
+                'encryption' => 'ssl',  //加密方式
+            ],
+            'messageConfig'=>[
+               'charset'=>'UTF-8',
+               'from'=>[
+                    '1608030398@qq.com'=>'管理员'
+                ]
+            ],
         ],
+
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [

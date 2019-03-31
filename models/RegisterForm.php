@@ -28,7 +28,22 @@ class RegisterForm extends Model
 	//邮件服务尚未搭建，暂设验证码
 	public function getVerifyCode()
 	{
-		return (string)mt_rand(10000,99999);
+		$this->code = (string)mt_rand(10000,99999);
+		return $this->code;
+	}
+
+	public function sendEmail()
+	{
+		$to = $this->email;
+        $subject = "《人恋人公益平台》注册码";
+        $body = "亲爱的".$this->email."您好，这是您的注册验证码：".$this->code."。感谢您的注册！";
+
+		$mail = Yii::$app->mailer->compose(); //加载配置的组件
+        $mail->setTo($to); //要发给谁
+        $mail->setSubject($subject); //标题 主题
+        $mail->setHtmlBody($body); //要发送的内容
+        
+        return $mail->send();
 	}
 }
 

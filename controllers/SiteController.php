@@ -150,22 +150,28 @@ class SiteController extends Controller
                 $user->isVerfied = 0;
                 $user->verifyCode = $model->getVerifyCode();
                 $user->save();
-                /*
-                这里是发邮件代码
-                */
+                
+                //这里是发邮件代码
+                if(!$model->sendEmail())
+                {
+                    return $this->render('registerfailed',['status'=>2]);
+                }
             }
             //如果存在且验证状态为1，则已被注册,否则未验证，更新验证码并重新发送邮件
             if($user)
             {
                 if($user->isVerfied == 1)
                 {
-                    return $this->render('registerfailed');
+                    return $this->render('registerfailed',['status'=>1]);
                 }
                 $user->verifyCode = $model->getVerifyCode();
                 $user->save();
-                /*
-                这里是发邮件代码
-                */
+
+                //这里是发邮件代码
+                if(!$model->sendEmail())
+                {
+                    return $this->render('registerfailed',['status'=>2]);
+                }
             }
 
             return $this->redirect(['site/register2','email'=>$model->email]);//执行本控制器中的Actionregister2,并将email传过去
