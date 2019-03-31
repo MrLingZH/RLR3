@@ -184,6 +184,7 @@ class SiteController extends Controller
             $user->reg_school = $model->schoolid;
             $user->tel = $model->tel;
             $user->isVerfied = 1;//1表示已验证
+            $user->degree = 'vip';
             $user->save();
 
             return $this->render('registersucceed');
