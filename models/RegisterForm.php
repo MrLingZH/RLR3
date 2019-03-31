@@ -28,7 +28,7 @@ class RegisterForm extends Model
 	//邮件服务尚未搭建，暂设验证码
 	public function getVerifyCode()
 	{
-		return '5275';
+		return (string)mt_rand(10000,99999);
 	}
 }
 

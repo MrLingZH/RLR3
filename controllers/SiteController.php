@@ -136,16 +136,8 @@ class SiteController extends Controller
 
         if($model->load(Yii::$app->request->post()))
         {
-            //查询该邮箱用户是否存在，如果存在且验证状态为1，则已被注册。
             $user = User::findByEmail($model->email);;
-            if($user)
-            {
-                if($user->isVerfied == 1)
-                {
-                    return $this->render('registerfailed');
-                }
-            }
-            //如果该邮箱用户不存在，则添加到用户表，并生成验证码
+            //查询该邮箱用户是否存在，如果该邮箱用户不存在，则添加到用户表，并生成验证码发送邮件
             if($user == null)
             {
                 $user = new User;
@@ -153,6 +145,22 @@ class SiteController extends Controller
                 $user->isVerfied = 0;
                 $user->verifyCode = $model->getVerifyCode();
                 $user->save();
+                /*
+                这里是发邮件代码
+                */
+            }
+            //如果存在且验证状态为1，则已被注册,否则未验证，更新验证码并重新发送邮件
+            if($user)
+            {
+                if($user->isVerfied == 1)
+                {
+                    return $this->render('registerfailed');
+                }
+                $user->verifyCode = $model->getVerifyCode();
+                $user->save();
+                /*
+                这里是发邮件代码
+                */
             }
 
             return $this->redirect(['site/register2','email'=>$model->email]);//执行本控制器中的Actionregister2,并将email传过去
@@ -166,9 +174,10 @@ class SiteController extends Controller
     {
         $model = new RegisterForm2;
 
+        $model->email = Yii::$app->request->get('email');//redirect实现控制器间的转跳，但method只能是get
+
         if($model->load(Yii::$app->request->post()) && $model->register())
         {
-            $model->email = Yii::$app->request->get('email');//redirect实现控制器间的转跳，但method只能是get
             $user = User::findByEmail($model->email);
             $user->username = $model->username;
             $user->password = password_hash($model->password, PASSWORD_DEFAULT);//给密码进行哈希加密
