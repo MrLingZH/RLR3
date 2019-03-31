@@ -181,6 +181,8 @@ class SiteController extends Controller
 
         $model->email = Yii::$app->request->get('email');//redirect实现控制器间的转跳，但method只能是get
 
+        if(!$model->email){return $this->redirect(['site/register']);}//检测第一步是否已提交邮箱，没有则返回第一步
+
         if($model->load(Yii::$app->request->post()) && $model->register())
         {
             $user = User::findByEmail($model->email);
