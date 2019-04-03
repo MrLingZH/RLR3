@@ -24,17 +24,12 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout','register','register2'],
+                'only' => ['logout'],
                 'rules' => [
                     [
                         'actions' => ['logout'],
                         'allow' => true,
                         'roles' => ['@'],
-                    ],
-                    [
-                        'actions' => ['register','register2'],
-                        'allow' => true,
-                        'roles' => ['?'],
                     ],
                 ],
             ],
@@ -137,6 +132,8 @@ class SiteController extends Controller
 
     public function actionRegister()
     {
+        if(!Yii::$app->user->isGuest){return $this->goBack();}
+
         $model = new RegisterForm;
 
         if($model->load(Yii::$app->request->post()))
@@ -183,6 +180,8 @@ class SiteController extends Controller
 
     public function actionRegister2()
     {
+        if(!Yii::$app->user->isGuest){return $this->goBack();}
+
         $model = new RegisterForm2;
 
         $model->email = Yii::$app->request->get('email');//redirect实现控制器间的转跳，但method只能是get
@@ -198,6 +197,9 @@ class SiteController extends Controller
             $user->tel = $model->tel;
             $user->isVerfied = 1;//1表示已验证
             $user->degree = 'vip';
+            $user->headimage = './upload_user/demo/man.png';
+            $user->money = 0;
+            $user->register_time = date("Y-m-d H:i:s");
             $user->save();
 
             return $this->render('registersucceed');
@@ -208,6 +210,14 @@ class SiteController extends Controller
         return $this->render('register2',[
             'model'=>$model,
             'allschool'=>$allschool,
+        ]);
+    }
+
+    public function actionAppcenter()
+    {
+
+        return $this->render('appcenter',[
+            'user'=>Yii::$app->user->identity,
         ]);
     }
 }
