@@ -15,6 +15,7 @@ use Yii;
  * @property int $registerresult
  * @property string $subDomain 二级域名
  * @property string $type
+ * @property int $witnessid 
  */
 class School extends \yii\db\ActiveRecord
 {
@@ -32,7 +33,7 @@ class School extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['minpercent', 'registerresult'], 'integer'],
+            [['minpercent', 'registerresult', 'witnessid'], 'integer'],
             [['name', 'address', 'pictures', 'subDomain', 'type'], 'string', 'max' => 255],
         ];
     }
@@ -51,6 +52,7 @@ class School extends \yii\db\ActiveRecord
             'registerresult' => 'Registerresult',
             'subDomain' => 'Sub Domain',
             'type' => 'Type',
+            'witnessid' => 'Witnessid',
         ];
     }
 
