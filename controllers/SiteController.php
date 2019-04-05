@@ -24,10 +24,13 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout'],
+                'only' => [
+                    'logout',
+                    'appcenter',
+                ],
                 'rules' => [
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['logout','appcenter'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -193,7 +196,8 @@ class SiteController extends Controller
             $user = User::findByEmail($model->email);
             $user->username = $model->username;
             $user->password = password_hash($model->password, PASSWORD_DEFAULT);//给密码进行哈希加密
-            $user->reg_school = $model->schoolid;
+            //$user->school = (int)$model->schoolid;
+            $user->school = (int)$_POST['schoolid'];//Yii的dropDownList()出现未知问题，传递值总为null，暂时用这种方式替代。
             $user->tel = $model->tel;
             $user->isVerfied = 1;//1表示已验证
             $user->degree = 'vip';
@@ -215,9 +219,15 @@ class SiteController extends Controller
 
     public function actionAppcenter()
     {
+        $user = Yii::$app->user->identity;
 
-        return $this->render('appcenter',[
-            'user'=>Yii::$app->user->identity,
-        ]);
+        if($user->degree == "vip")
+        {
+            return $this->render('appcenter',[
+                'user'=>$user,
+            ]);
+        }
+
+        
     }
 }

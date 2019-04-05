@@ -10,6 +10,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php
 //var_dump($user);
+    $trans_degree = [
+        'vip'=>'会员',
+    ];
 
 ?>
 <div class="container-fluid">
@@ -17,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-md-12">
 
             <h3>
-                <i class="glyphicon glyphicon-user"></i><?=$user['degree']."&nbsp".$user['username']?>
+                <i class="glyphicon glyphicon-user"></i><?=$trans_degree[$user['degree']]."&nbsp".$user['username']?>
             </h3>
         </div>
     </div>
@@ -68,7 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
              <div class="col-xs-6 col-sm-3 placeholder">
               <img src=<?=Yii::$app->request->baseUrl.'/image/donate.jpg'?> class="img-responsive" alt="Generic placeholder thumbnail">
-             <h4><?= Html::a('助学申请', Url::to(['donate/needdonate']),['class' => 'btn btn-primary', 'name' => 'view-button']) ?>
+             <h4><?= Html::a('助学申请', Url::to(['donate/wish']),['class' => 'btn btn-primary', 'name' => 'view-button']) ?>
                 </h4>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">

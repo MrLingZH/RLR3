@@ -75,7 +75,7 @@ $this->title = '人恋人公益平台';
 <div class="site-index">
 
     <div class="jumbotron">
-    <?= Html::a('应用中心', Url::to(['site/dashboard']),['class' => 'btn btn-primary', 'name' => 'view-button']) ?>
+    <?= Html::a('应用中心', Url::to(['site/appcenter']),['class' => 'btn btn-primary', 'name' => 'view-button']) ?>
     </div>
 
 </div>
