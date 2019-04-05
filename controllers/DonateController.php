@@ -6,6 +6,7 @@ use Yii;
 use yii\web\Controller;
 use app\models\WishForm;
 use app\models\School;
+use app\models\Wish;
 
 class DonateController extends Controller
 {
@@ -13,11 +14,28 @@ class DonateController extends Controller
 	{
 		$model = new WishForm;
 
-		if($model->load(Yii::$app->request->post()))
+		if($model->load(Yii::$app->request->post()) && $model->wish())
 		{
 			$model->count = (int)$_POST['count'];
-			$model->tag = (int)$_POST['tag'];
+			$model->tag = $_POST['tag'];
 			$model->schoolid = (int)$_POST['schoolid'];
+
+			if($model->schoolid == 0){return $this->render('wishfailed',['status'=>1]);}
+
+			$wish = new Wish;
+			$wish->toWho = Yii::$app->user->identity->id;
+			$wish->auditor = School::getWitnessid($model->schoolid);
+			$wish->school = $model->schoolid;
+			$wish->count = $model->count;
+			$wish->description = $model->description;
+			$wish->totalMoney = $model->totalMoney;
+			$wish->installment = 'monthly';
+			$wish->status = 0;
+			$wish->guardian_name = $model->guardian_name;
+			$wish->guardian_tel = $model->guardian_tel;
+			$wish->guardian_cardnumber = $model->guardian_cardnumber;
+			$wish->tag = $model->tag;
+			if(!$wish->save()){return $this->render('wishfailed',['status'=>2]);}
 
 			return $this->render('wishsucceed',['data'=>$model]);
 		}

@@ -88,12 +88,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="col-lg-6">
                 <select id="wishform-schoolid" class="form-control" name="schoolid">
                     <option value="0">选择社区</option>
-                    <?php
-                    foreach ($listData as $key => $value)
-                    {
-                        echo '<option value="'.$key.'">'.$value.'</option>';
-                    }
-                    ?>
+                    <?php foreach ($listData as $key => $value){echo '<option value="'.$key.'">'.$value.'</option>';} ?>
                 </select>
             </div>
             <div class="col-lg-8"><p class="help-block help-block-error "></p></div>

@@ -60,4 +60,11 @@ class School extends \yii\db\ActiveRecord
     {
         return static::find()->all();
     }
+
+    public static function getWitnessid($id)
+    {
+        $result = static::findOne(['id'=>$id]);
+
+        return $result->witnessid;
+    }
 }
