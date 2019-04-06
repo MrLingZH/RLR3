@@ -225,8 +225,11 @@ class SiteController extends Controller
         if($user->degree == "vip")
         {
             $count = [
-                'wish' => Wish::getMyWishCount($user->id),
-                'banji' => Banji::getMyBanjiCount($user->id),
+                'wish' => Wish::getMyWishCount($user->id),//我的心愿
+                'banji' => Banji::getMyBanjiCount($user->id),//创建的团体
+                'message' => 0,//我的站内消息
+                'donate' => 0,//我的资助
+                'join' => 0,//加入的团体
             ];
 
             return $this->render('appcenter',[
