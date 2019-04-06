@@ -14,5 +14,4 @@ $this->params['breadcrumbs'][] = $this->title;
 	<h1><?= Html::encode($this->title) ?></h1>
 	<p>恭喜成功许下心愿，请耐心等待愿望实现！</p>
 	<?= Html::a('返回到应用中心',Url::to(['site/appcenter']),['class'=>'btn btn-success']) ?>
-	<?= var_dump($data) ?>
 </div>

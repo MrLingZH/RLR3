@@ -16,10 +16,6 @@ class DonateController extends Controller
 
 		if($model->load(Yii::$app->request->post()) && $model->wish())
 		{
-			$model->count = (int)$_POST['count'];
-			$model->tag = $_POST['tag'];
-			$model->schoolid = (int)$_POST['schoolid'];
-
 			if($model->schoolid == 0){return $this->render('wishfailed',['status'=>1]);}
 
 			$wish = new Wish;
@@ -35,6 +31,7 @@ class DonateController extends Controller
 			$wish->guardian_tel = $model->guardian_tel;
 			$wish->guardian_cardnumber = $model->guardian_cardnumber;
 			$wish->tag = $model->tag;
+			$wish->wishtime = date("Y-m-d H:i:s");
 			if(!$wish->save()){return $this->render('wishfailed',['status'=>2]);}
 
 			return $this->render('wishsucceed',['data'=>$model]);

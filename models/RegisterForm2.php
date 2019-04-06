@@ -32,6 +32,7 @@ class RegisterForm2 extends Model
 			['repassword', 'compare', 'compareAttribute' => 'password','message'=>'两次输入的密码不一致！'],
 
 			['code','required'],
+			['schoolid','required'],
 			['tel','match','pattern'=>'/^1[34578]\d{9}$/','message'=>'手机号码格式错误'],
 
 			['acknowledgement', 'boolean'],

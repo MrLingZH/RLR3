@@ -28,28 +28,9 @@ $this->params['breadcrumbs'][] = $this->title;
 	echo $form->field($model,'repassword')->passwordInput();
 	echo $form->field($model,'tel');
 	$listData=ArrayHelper::map($allschool,'id','name');//把查询到的数据$allschool截成'id'=>'name'
-    ?>
-
-	<div class="form-group field-registerform2-schoolid">
-	<label class="col-lg-1 control-label" for="registerform2-schoolid">选择社区</label>
-	<div class="col-lg-3">
-		<select id="registerform2-schoolid" class="form-control" name="schoolid">
-			<option value="0">选择社区</option>
-			<?php
-			foreach ($listData as $key => $value)
-			{
-				echo '<option value="'.$key.'">'.$value.'</option>';
-			}
-			?>
-		</select>
-	</div>
-	<div class="col-lg-8"><p class="help-block help-block-error "></p></div>
-	</div>
-
-    <?php
-	/*echo $form->field($model, 'schoolid')->dropDownList(
+	echo $form->field($model, 'schoolid')->dropDownList(
                                         $listData, 
-                                        ['prompt'=>'选择社区']);*/
+                                        ['prompt'=>'选择社区']);
 	echo $form->field($model, 'acknowledgement')->checkbox([
             'template' => '<div class=\"col-lg-offset-2 col-lg-3\">{input} 同意
             <a href='.Url::to(['site/about']).' target="blank">《人恋人社区须知》</a>

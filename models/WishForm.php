@@ -19,7 +19,7 @@ class WishForm extends Model
 	public function rules()
 	{
 		return [
-			[['totalMoney','description','schoolnumber'],'required'],
+			[['count','schoolid','tag','totalMoney','description','schoolnumber'],'required'],
 
 			['schoolid','validateSchoolid'],
 			['guardian_tel','match','pattern'=>'/^1[34578]\d{9}$/','message'=>'手机号码格式错误'],
@@ -44,7 +44,7 @@ class WishForm extends Model
 	public function validateSchoolid($attribute, $params)
     {
         if (!$this->hasErrors()) {
-            if($this->schoolid == '0'){
+            if($this->schoolid == 0){
                 $this->addError($attribute,'请选择社区！');
             }
         }

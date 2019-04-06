@@ -30,7 +30,7 @@ use Yii;
  * @property string $guardian_name 监护人姓名
  * @property string $guardian_tel 监护人电话
  * @property string $guardian_cardnumber 监护人卡号
- * @property int $tag 类型
+ * @property string $tag 类型
  */
 class Wish extends \yii\db\ActiveRecord
 {
