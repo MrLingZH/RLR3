@@ -86,4 +86,9 @@ class Wish extends \yii\db\ActiveRecord
             'tag' => 'Tag',
         ];
     }
+
+    public static function getMyWishCount($id)
+    {
+        return count(static::findAll(['toWho'=>$id]));
+    }
 }

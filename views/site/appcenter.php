@@ -32,11 +32,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     <br><?= Html::a('上传头像', Url::to(['site/uploadheadimage']),['class' => 'btn btn-info', 'name' => 'view-button']) ?>&nbsp
                     <?= Html::a('完善个人资料', ['site/edituserdata'], ['class' => 'btn btn-success btn-sm']); ?><br><br>
                     <a href=<?=Url::to(['message/messagetome'])?> class="list-group-item">
-                        <span class="badge"><?=1;?></span>我的站内信</a>
+                        <span class="badge"><?= 0 ?></span>我的站内信</a>
                     <a href=<?=Url::to(['message/fillinmessage'])?> class="list-group-item">
                         <span class="badge"></span>发送站内信</a>
                     <a href=<?=Url::to(['donate/donatetome'])?> class="list-group-item">
-                        <span class="badge"><?=0;?></span>我的心愿</a>
+                        <span class="badge"><?= $count['wish'] ?></span>我的心愿</a>
                     <a href=<?=Url::to(['donate/mydonation'])?> class="list-group-item">
                         <span class="badge"><?=0;?></span>我的资助</a>
                     <a href=<?=Url::to(['class/myclasses'])?> class="list-group-item">创建的团体</a>  

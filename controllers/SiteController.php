@@ -13,6 +13,7 @@ use app\models\RegisterForm;
 use app\models\RegisterForm2;
 use app\models\User;
 use app\models\School;
+use app\models\Wish;
 
 class SiteController extends Controller
 {
@@ -222,8 +223,13 @@ class SiteController extends Controller
 
         if($user->degree == "vip")
         {
+            $count = [
+                'wish' => Wish::getMyWishCount($user->id),
+            ];
+
             return $this->render('appcenter',[
-                'user'=>$user,
+                'user' => $user,
+                'count' => $count,
             ]);
         }
 
