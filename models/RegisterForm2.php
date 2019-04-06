@@ -81,11 +81,6 @@ class RegisterForm2 extends Model
     	}
     	return false;
     }
-
-	public function getVerifyCode()
-	{
-		return '5275';
-	}
 }
 
 

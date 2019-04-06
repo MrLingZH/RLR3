@@ -34,7 +34,7 @@ class DonateController extends Controller
 			$wish->wishtime = date("Y-m-d H:i:s");
 			if(!$wish->save()){return $this->render('wishfailed',['status'=>2]);}
 
-			return $this->render('wishsucceed',['data'=>$model]);
+			return $this->render('wishsucceed');
 		}
 
 		$allschool = School::findAllSchool();

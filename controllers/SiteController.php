@@ -14,6 +14,7 @@ use app\models\RegisterForm2;
 use app\models\User;
 use app\models\School;
 use app\models\Wish;
+use app\models\Banji;
 
 class SiteController extends Controller
 {
@@ -225,6 +226,7 @@ class SiteController extends Controller
         {
             $count = [
                 'wish' => Wish::getMyWishCount($user->id),
+                'banji' => Banji::getMyBanjiCount($user->id),
             ];
 
             return $this->render('appcenter',[
