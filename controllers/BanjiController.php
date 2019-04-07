@@ -8,6 +8,7 @@ use app\models\BanjiForm;
 use app\models\School;
 use app\models\Banji;
 use app\models\RelationshipBanjiMates;
+use yii\web\NotFoundHttpException;
 
 class BanjiController extends Controller
 {
@@ -44,6 +45,21 @@ class BanjiController extends Controller
 
 		return $this->render('create',[
 			'model'=>$model,
+		]);
+	}
+
+	public function actionMybanji()
+	{
+		$mybanji = Banji::getMybanji(Yii::$app->user->identity->id);
+
+		//DataProvider数据提供者
+		$provider = new \yii\data\ArrayDataProvider([
+                        'allModels' => $mybanji,
+                        'pagination' => ['pageSize' => 5],
+                        'key' => 'id',
+                    ]);
+		return $this->render('mybanji',[
+			'provider'=>$provider,
 		]);
 	}
 

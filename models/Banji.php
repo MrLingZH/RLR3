@@ -76,4 +76,9 @@ class Banji extends \yii\db\ActiveRecord
     {
         return count(static::findAll(['administrator'=>$id]));
     }
+
+    public static function getMybanji($id)
+    {
+        return static::findAll(['administrator'=>$id]);
+    }
 }
