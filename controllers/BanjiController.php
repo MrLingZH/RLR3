@@ -8,7 +8,6 @@ use app\models\BanjiForm;
 use app\models\School;
 use app\models\Banji;
 use app\models\RelationshipBanjiMates;
-use yii\web\NotFoundHttpException;
 
 class BanjiController extends Controller
 {
