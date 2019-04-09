@@ -61,6 +61,11 @@ class School extends \yii\db\ActiveRecord
         return static::find()->all();
     }
 
+    public static function findById($id)
+    {
+        return static::findOne(['id'=>$id]);
+    }
+
     public static function getWitnessid($id)
     {
         $result = static::findOne(['id'=>$id]);

@@ -7,6 +7,7 @@ use yii\web\Controller;
 use app\models\BanjiForm;
 use app\models\School;
 use app\models\Banji;
+use app\models\User;
 use app\models\RelationshipBanjiMates;
 
 class BanjiController extends Controller
@@ -50,6 +51,16 @@ class BanjiController extends Controller
 	public function actionMybanji()
 	{
 		$mybanji = Banji::getMybanji(Yii::$app->user->identity->id);
+
+		//如果有查询结果，则把school字段和administrator字段的id改成对应的名字
+		if($mybanji)
+		{
+			for($i=0;$i<count($mybanji);$i++)
+			{
+				$mybanji[$i]->administrator = User::findIdentity($mybanji[$i]->administrator)->username;
+				$mybanji[$i]->school = School::findById($mybanji[$i]->school)->name;
+			}
+		}
 
 		//DataProvider数据提供者
 		$provider = new \yii\data\ArrayDataProvider([
