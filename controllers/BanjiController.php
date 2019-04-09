@@ -9,6 +9,7 @@ use app\models\School;
 use app\models\Banji;
 use app\models\User;
 use app\models\RelationshipBanjiMates;
+use yii\web\NotFoundHttpException;
 
 class BanjiController extends Controller
 {
@@ -75,10 +76,20 @@ class BanjiController extends Controller
 
 	public function actionMybanjidetail()
 	{
-		$id = $_GET['id'];
-		$data = Banji::findById($id);
-		$data->administrator = User::findIdentity($id)->username;
-		$data->school = School::findById($id)->name;
+		$data = Banji::findById($_GET['id']);
+		if($data)
+		{
+			if($data->administrator != Yii::$app->user->identity->id)//如果用户不是团体的管理员
+			{
+				return $this->goBack();
+			}
+			$data->administrator = User::findIdentity($data->administrator)->username;
+			$data->school = School::findById($data->school)->name;
+		}
+		else
+		{
+			return $this->goBack();
+		}
 		return $this->render('mybanjidetail',[
 			'data'=>$data,
 		]);
