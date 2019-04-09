@@ -45,7 +45,7 @@ function printtablebody($column1,$column2,$column3,$column4,$class)
                             '.Html::a('进入团体', Url::to(['class/classmates','id'=>$column4])).'
                         </td>
                         <td>
-                            '.Html::a('详情', Url::to(['class/view','id'=>$column4])).'
+                            '.Html::a('详情', Url::to(['banji/mybanjidetail','id'=>$column4])).'
                             '.Html::a('修改', Url::to(['class/update','id'=>$column4])).'
                         </td>
                     </tr>';

@@ -53,6 +53,11 @@ class Banji extends \yii\db\ActiveRecord
         ];
     }
 
+    public static function findById($id)
+    {
+        return static::findOne(['id'=>$id]);
+    }
+
     public static function findByName($name)
     {
         return static::findOne(['name'=>$name]);

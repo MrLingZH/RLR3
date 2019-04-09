@@ -73,6 +73,17 @@ class BanjiController extends Controller
 		]);
 	}
 
+	public function actionMybanjidetail()
+	{
+		$id = $_GET['id'];
+		$data = Banji::findById($id);
+		$data->administrator = User::findIdentity($id)->username;
+		$data->school = School::findById($id)->name;
+		return $this->render('mybanjidetail',[
+			'data'=>$data,
+		]);
+	}
+
 }
 
 
