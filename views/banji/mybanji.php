@@ -42,11 +42,11 @@ function printtablebody($column1,$column2,$column3,$column4,$class)
                             '.$column3.'
                         </td>
                          <td>
-                            '.Html::a('进入团体', Url::to(['class/classmates','id'=>$column4])).'
+                            '.Html::a('进入团体', Url::to(['banji/banjimates','id'=>$column4])).'
                         </td>
                         <td>
                             '.Html::a('详情', Url::to(['banji/mybanjidetail','id'=>$column4])).'
-                            '.Html::a('修改', Url::to(['class/update','id'=>$column4])).'
+                            '.Html::a('修改', Url::to(['banji/update','id'=>$column4])).'
                         </td>
                     </tr>';
 }

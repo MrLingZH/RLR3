@@ -45,4 +45,9 @@ class RelationshipBanjiMates extends \yii\db\ActiveRecord
             'mates' => 'Mates',
         ];
     }
+
+    public static function findAllByBanji($id)
+    {
+        return static::findAll(['id'=>$id]);
+    }
 }

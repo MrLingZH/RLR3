@@ -9,7 +9,6 @@ use app\models\School;
 use app\models\Banji;
 use app\models\User;
 use app\models\RelationshipBanjiMates;
-use yii\web\NotFoundHttpException;
 
 class BanjiController extends Controller
 {
@@ -92,6 +91,50 @@ class BanjiController extends Controller
 		}
 		return $this->render('mybanjidetail',[
 			'data'=>$data,
+		]);
+	}
+
+	public function actionBanjimates()
+	{
+		$banji = Banji::findById($_GET['id']);
+		if($banji)
+		{
+			if($banji->administrator != Yii::$app->user->identity->id)
+			{
+				return $this->goBack();
+			}
+			$banji->administrator = User::findIdentity($banji->administrator)->username;
+			$banji->school = School::findById($banji->school)->name;
+		}
+		else
+		{
+			return $this->goBack();
+		}
+
+		//这里查询结果为
+		//$mates->id 		自增长的id
+		//$mates->banji 	班级id
+		//$mates->mates 	成员的id
+		if($mates = RelationshipBanjiMates::findAllByBanji($_GET['id']))
+		{
+			//将查询到的关系加工成成员信息
+			foreach($mates as $key => $value)
+			{
+				$t_user = User::findIdentity($mates[$key]->mates);
+				$mates[$key] = [];
+				$mates[$key]['username'] = $t_user->username;
+				$mates[$key]['email'] = $t_user->email;
+			}
+		}
+		$provider = new \yii\data\ArrayDataProvider([
+                        'allModels' => $mates,
+                        'pagination' => ['pageSize' => 5],
+                        'key' => 'username',
+                    ]);
+
+		return $this->render('banjimates',[
+			'banji'=>$banji,
+			'provider'=>$provider,
 		]);
 	}
 
