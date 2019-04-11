@@ -10,14 +10,14 @@ use Yii;
  * @property int $id
  * @property string $name
  * @property string $address
- * @property int $minpercent 戮猫驴卯脳卯脨隆掳脵路脰卤脠
+ * @property int $minpercent 捐款最小百分比
  * @property string $pictures
- * @property int $registerresult 脳垄虏谩陆谩鹿没拢卢0=麓媒脡贸潞脣拢卢1=脡贸潞脣脥篓鹿媒拢卢2=脡贸潞脣虏禄脥篓鹿媒
- * @property string $subDomain 露镁录露脫貌脙没
+ * @property int $registerresult 注册结果，0=待审核，1=审核通过，2=审核不通过
+ * @property string $subDomain 二级域名
  * @property string $type
  * @property int $witnessid 
  * @property string $registertime
- * @property string $registername 脡锚脟毛脢卤碌脠麓媒脡贸潞脣碌脛脕脵脢卤脩搂脨拢脙没
+ * @property string $registername 申请时等待审核的临时学校名
  */
 class School extends \yii\db\ActiveRecord
 {
