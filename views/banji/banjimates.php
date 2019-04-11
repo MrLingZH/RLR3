@@ -207,10 +207,10 @@ printvotetableend();
 //print classmate table
 $models = $provider->getModels();
 echo '<h3>同学录</h3>';
-printclassmatestablehead('邮箱','用户名','');
+printclassmatestablehead('用户名','邮箱','');
 foreach ($models as $model) 
 {
-    printclassmatestablebody($model['email'],$model['username'],'');
+    printclassmatestablebody($model['username'],$model['email'],'');
 }
 printclassmatestableend();
 ?>

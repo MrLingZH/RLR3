@@ -65,7 +65,7 @@ class BanjiController extends Controller
 		//DataProvider数据提供者
 		$provider = new \yii\data\ArrayDataProvider([
                         'allModels' => $mybanji,
-                        'pagination' => ['pageSize' => 5],
+                        'pagination' => ['pageSize' => 10],
                         'key' => 'id',
                     ]);
 		return $this->render('mybanji',[
@@ -128,7 +128,7 @@ class BanjiController extends Controller
 		}
 		$provider = new \yii\data\ArrayDataProvider([
                         'allModels' => $mates,
-                        'pagination' => ['pageSize' => 5],
+                        'pagination' => ['pageSize' => 10],
                         'key' => 'username',
                     ]);
 

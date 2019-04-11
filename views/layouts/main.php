@@ -70,8 +70,8 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
-
+        <p class="pull-left">&copy; 人恋人公益平台 <?= date('Y') ?></p>
+        &nbsp<a href="./index?r=site/register_school">学校注册</a>
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
 </footer>
