@@ -234,11 +234,59 @@ class SiteController extends Controller
                 'join' => 0,//加入的团体
             ];
 
+            //交易记录表还没建立，下面为临时数据
+            $trade = [
+                '0' => [
+                    'id' => 0,
+                    'tradetime' => '2019-4-12 22:36:46',
+                    'type' => '扣钱',
+                    'money' => -100,
+                    'status' => '成功',
+                ],
+                '1' => [
+                    'id' => 1,
+                    'tradetime' => '2019-4-12 22:46:18',
+                    'type' => '充钱',
+                    'money' => 648,
+                    'status' => '成功',
+                ],
+            ];
+            $provider = new \yii\data\ArrayDataProvider([
+                            'allModels' => $trade,
+                            'pagination' => ['pageSize' => 10],
+                            //'key' => 'id',
+                        ]);
+
             return $this->render('appcenter',[
                 'user' => $user,
                 'count' => $count,
+                'provider'=>$provider,
             ]);
-        } 
+        }
+        else if($user->degree == 'admin')
+        {
+            $count = [
+                'status0' => 0,//待审批
+                'status1' => 0,//审核通过
+                'status2' => 0,//审核不通过
+                'message' => 0,//我的站内消息
+            ];
+
+            $affair = [
+                'apply_school' => School::findAll(['registerresult'=>0]),
+            ];
+            $provider = new \yii\data\ArrayDataProvider([
+                            'allModels' => $affair,
+                            'pagination' => ['pageSize' => 10],
+                            //'key' => 'id',
+                        ]);
+
+            return $this->render('appcenter_admin',[
+                'user'=>$user,
+                'count'=>$count,
+                'provider'=>$provider,
+            ]);
+        }
     }
 
     public function actionRegister_school()

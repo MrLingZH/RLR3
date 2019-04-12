@@ -47,7 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <div class="new-img" style="left: 70px; top: -10px;"><img src="/image/new.png" alt=""></div>
                         <?php
                             }
-                        ?>
+                        ?>e
                     </a>
             </div>
         </div>
@@ -76,6 +76,93 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
 
-        
+<?php
+function printtalehead($column1,$column2,$column3,$column4)
+{
+    echo '<table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>
+                            '.$column1.'
+                        </th>
+                        <th>
+                            '.$column2.'
+                        </th>
+                        <th>
+                           '.$column3.'
+                        </th>
+                        <th>
+                           '.$column4.'
+                        </th>
+                        </tr>
+                </thead>
+                 <tbody>';
+}
+function printtablebody($column1,$column2,$column3,$column4,$column5,$class)
+{
+    if($column4<0)
+    {
+        echo '<tr class="'.$class.'">
+                        <td>
+                            '.$column2.'
+                        </td>
+                        <td>
+                        '.$column3.'
+                        </td>
+                        <td><span style="color:red">
+                           '.$column4.'
+                        </span></td>
+                        <td>
+                        '.$column5.'
+                        </td>
+                        <td>
+                            '.Html::a('详情', Url::to(['money/view','id'=>$column1])).'
+                        </td>
+                    </tr>';
+    }
+    else
+    {
+         echo '<tr class="'.$class.'">
+                        <td>
+                            '.$column2.'
+                        </td>
+                        <td>
+                        '.$column3.'
+                        </td>
+                        <td><span style="color:green">
+                           +'.$column4.'
+                        </span></td>
+                        <td>
+                        '.$column5.'
+                        </td>
+                        <td>
+                            '.Html::a('详情', Url::to(['money/view','id'=>$column1])).'
+                        </td>
+                    </tr>';
+    }
+}
+function printtableend()
+{
+    echo '</tbody></table>';
+}
+    
+    $models = $provider->getModels();
+    $pages = $provider->getPagination();
+    echo '<h3>最近交易记录</h3>';
+    printtalehead('时间','说明','金额','交易状态');
+    foreach ($models as $model) 
+    {
+        printtablebody($model['id'],$model['tradetime'],$model['type'],$model['money'],$model['status'],'');
+    }
+    printtableend();
+    $maxButtonCount = 10;
+    echo yii\widgets\LinkPager::widget([
+        'pagination' => $pages,
+        'maxButtonCount' => $maxButtonCount,
+        'firstPageLabel' => $pages->getPageCount()>$maxButtonCount && $pages->getPage()!=0 ? '首页' : false,
+        'lastPageLabel' => $pages->getPageCount()>$maxButtonCount && $pages->getPage()!=$pages->getPageCount()-1? '尾页' : false,
+    ]);
+?>
+
     </div>
 </div>
