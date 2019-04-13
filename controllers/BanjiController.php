@@ -75,7 +75,7 @@ class BanjiController extends Controller
 
 	public function actionMybanjidetail()
 	{
-		$data = Banji::findById($_GET['id']);
+		$data = Banji::findById(Yii::$app->request->get('id'));
 		if($data)
 		{
 			if($data->administrator != Yii::$app->user->identity->id)//如果用户不是团体的管理员
@@ -96,7 +96,7 @@ class BanjiController extends Controller
 
 	public function actionBanjimates()
 	{
-		$banji = Banji::findById($_GET['id']);
+		$banji = Banji::findById(Yii::$app->request->get('id'));
 		if($banji)
 		{
 			if($banji->administrator != Yii::$app->user->identity->id)
@@ -115,7 +115,7 @@ class BanjiController extends Controller
 		//$mates->id 		自增长的id
 		//$mates->banji 	班级id
 		//$mates->mates 	成员的id
-		if($mates = RelationshipBanjiMates::findAllByBanji($_GET['id']))
+		if($mates = RelationshipBanjiMates::findAllByBanji(Yii::$app->request->get('id')))
 		{
 			//将查询到的关系加工成成员信息
 			foreach($mates as $key => $value)

@@ -3,6 +3,7 @@
 namespace app\models;
 
 use yii\base\Model;
+use app\models\School;
 
 class WishForm extends Model
 {
@@ -22,6 +23,7 @@ class WishForm extends Model
 			[['count','schoolid','tag','totalMoney','description','schoolnumber'],'required'],
 
 			['schoolid','validateSchoolid'],
+			['schoolnumber','validateSchoolnumber'],
 			['guardian_tel','match','pattern'=>'/^1[34578]\d{9}$/','message'=>'手机号码格式错误'],
 		];
 	}
@@ -46,6 +48,15 @@ class WishForm extends Model
         if (!$this->hasErrors()) {
             if($this->schoolid == 0){
                 $this->addError($attribute,'请选择社区！');
+            }
+        }
+    }
+
+    public function validateSchoolnumber($attribute, $params)
+    {
+        if (!$this->hasErrors()) {
+            if($this->schoolnumber != School::findOne(['id'=>$this->schoolid])->schoolnumber){
+                $this->addError($attribute,'社区代码必须对应社区');
             }
         }
     }

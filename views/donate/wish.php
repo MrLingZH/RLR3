@@ -16,6 +16,7 @@ $trans_name = array(
     );
 $this->title = $trans_name[Yii::$app->controller->action->id];
 $this->params['breadcrumbs'][] = ['label'=>'应用中心','url'=>\yii\helpers\Url::to(['site/appcenter'])];
+if($this->title == '编辑心愿')$this->params['breadcrumbs'][] = ['label'=>'我的心愿','url'=>\yii\helpers\Url::to(['donate/mywish'])];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-login">
@@ -34,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
     echo $form->field($model, 'count')->dropDownList(['1' => '1', '2' => '2','3' => '3', '4' => '4','5' => '5', '6' => '6','7' => '7', '8' => '8','9' => '9', '10' => '10','11' => '11','12'=>'一年','24'=>'两年','36'=>'三年','48'=>'四年','60'=>'五年','72'=>'六年']);
     echo $form->field($model, 'totalMoney');
 
-    if($this->title  == '发布心愿')
+    if($this->title  == '发布心愿' || 1)
         {
 			echo $form->field($model, 'tag')->dropDownList(['1' => '贫困', '2' => '单亲','3' => '孤儿']);
             $listData=ArrayHelper::map($allschool,'id','name');

@@ -18,6 +18,7 @@ use Yii;
  * @property int $witnessid 
  * @property string $registertime
  * @property string $registername 申请时等待审核的临时学校名
+ * @property string $schoolnumber 学校代码
  */
 class School extends \yii\db\ActiveRecord
 {
@@ -37,7 +38,7 @@ class School extends \yii\db\ActiveRecord
         return [
             [['minpercent', 'registerresult', 'witnessid'], 'integer'],
             [['registertime'], 'safe'], 
-            [['name', 'address', 'pictures', 'subDomain', 'type', 'registername'], 'string', 'max' => 255],
+            [['name', 'address', 'pictures', 'subDomain', 'type', 'registername','schoolnumber'], 'string', 'max' => 255],
         ];
     }
 
@@ -58,6 +59,7 @@ class School extends \yii\db\ActiveRecord
             'witnessid' => 'Witnessid',
             'registertime' => 'Registertime', 
             'registername' => 'Registername',
+            'schoolnumber' => 'Schoolnumber',
         ];
     }
 
