@@ -36,23 +36,6 @@ class RegisterForm_school extends Model
         }
     }
 
-	//刚注册时随机生成二级域名
-	public function getsubDomain()
-	{
-		$this->subDomain = 's';
-		$code = '0123456789';
-		while(1)
-    	{
-    		$this->subDomain .= $code{mt_rand(1,9)};
-			for($i=1;$i<=4;$i++)
-			{
-				$this->subDomain .= $code{mt_rand(0,9)};
-			}
-    		if(!School::findBySubDomain($this->subDomain))break;
-    	}
-		return $this->subDomain;
-	}
-
 	public function beforSubmit()
     {
     	if($this->validate())

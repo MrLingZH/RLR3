@@ -47,6 +47,38 @@ $this->params['breadcrumbs'][] = $this->title;
             echo $form->field($model, 'guardian_cardnumber');
     		echo $form->field($model, 'description')->textarea(['rows'=>10,'style'=>'resize:none']);
         }
+
+    //Javascript实现表单自动填充
+    $schoolnumber = [];
+    $schoolid = [];
+    foreach($allschool as $value)
+    {
+        $schoolnumber[$value->id] = $value->schoolnumber;
+        $schoolid[$value->schoolnumber] = $value->id;
+    }
+    $js1 = 'var schoolnumber = '.json_encode($schoolnumber).';
+            var schoolid = '.json_encode($schoolid).';';
+    $js2 = <<<EOF
+    $('#wishform-schoolid').change(function(){
+        $('#wishform-schoolnumber').val(schoolnumber[$(this).val()]);
+        });
+    $('#wishform-schoolnumber').change(function(){
+        if(!schoolid[$(this).val()])
+        {
+            alert('无效的社区代码');
+            $('#wishform-schoolid').val('');
+            $('#wishform-schoolnumber').val('');
+        }
+        else
+        {
+            $('#wishform-schoolid').val(schoolid[$(this).val()]);
+        }
+        });
+EOF;
+    $this->registerJs($js1);
+    $this->registerJs($js2);
+    echo $js1;
+    echo $js2;
 ?>
 
     <div class="form-group">

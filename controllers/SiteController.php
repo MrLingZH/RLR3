@@ -266,15 +266,19 @@ class SiteController extends Controller
         else if($user->degree == 'admin')
         {
             $count = [
-                'status0' => 0,//待审批
-                'status1' => 0,//审核通过
-                'status2' => 0,//审核不通过
+                'status0' => count(School::findAll(['registerresult'=>0])),//待审批
+                'status1' => count(School::findAll(['registerresult'=>1])),//审核通过
+                'status2' => count(School::findAll(['registerresult'=>2])),//审核不通过
                 'message' => 0,//我的站内消息
             ];
 
             $affair = [
                 'apply_school' => School::findAll(['registerresult'=>0]),
             ];
+            foreach($affair['apply_school'] as $value)
+            {
+                $value->witnessid = User::findOne(['id'=>$value->witnessid])->username;
+            }
             $provider = new \yii\data\ArrayDataProvider([
                             'allModels' => $affair,
                             'pagination' => ['pageSize' => 10],

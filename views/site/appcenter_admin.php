@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <a href=<?=Url::to(['event/eventlist','result'=>'disagreed'])?> class="list-group-item">
                         <span class="badge"><?= $count['status2'] ?></span>审核未通过</a>  
                     <a href=<?=Url::to(['event/eventlist','result'=>'agreed'])?> class="list-group-item">
-                        <span class="badge"><? $count['status1'] ?></span>审核通过</a>  
+                        <span class="badge"><?= $count['status1'] ?></span>审核通过</a>  
                     <a href=<?=Url::to(['site/getcurrentuserdata'])?> class="list-group-item">个人资料</a>
                     <a href=<?=Url::to(['template/list'])?> class="list-group-item">
                         模板管理
@@ -103,8 +103,8 @@ function printtablebody($column1,$column2,$column3,$column4,$column5,$column6,$c
                            '.Html::a('承诺书', Url::to(['site/viewcertificate','id'=>$column1]),['class' => 'btn btn-success btn-xs']).'
                         </td>
                         <td>
-                            '.Html::a('同意', Url::to(['event/agree','id'=>$column1]),['class' => 'btn btn-success btn-xs']).'
-                            '.Html::a('拒绝', Url::to(['event/disagree','id'=>$column1]),['class' => 'btn btn-success btn-xs']).'
+                            '.Html::a('同意', Url::to(['admin/agreed_apply_school','id'=>$column1]),['class' => 'btn btn-success btn-xs']).'
+                            '.Html::a('拒绝', Url::to(['admin/disagree_apply_school','id'=>$column1]),['class' => 'btn btn-success btn-xs']).'
                         </td>
                     </tr>';
 }
