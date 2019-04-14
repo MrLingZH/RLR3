@@ -65,7 +65,7 @@ class School extends \yii\db\ActiveRecord
 
     public static function findAllSchool()
     {
-        return static::find()->all();
+        return static::findAll(['registerresult'=>1]);
     }
 
     public static function findById($id)

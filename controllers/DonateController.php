@@ -72,7 +72,7 @@ class DonateController extends Controller
 
 	public function actionWishdetail()
 	{
-		$wish = Wish::findOne(['id'=>Yii::$app->request->get('id')]);
+		if(!$wish = Wish::findOne(['id'=>Yii::$app->request->get('id')])){return $this->redirect(['donate/mywish']);}
 		$wish->auditor = User::findOne(['id'=>$wish->auditor])->username;
 
 		$toWho = User::findOne(['id'=>$wish->toWho]);
@@ -89,7 +89,8 @@ class DonateController extends Controller
 
 	public function actionEditwish()
 	{
-		$wish = Wish::findOne(['id'=>Yii::$app->request->get('id')]);
+		if(!$wish = Wish::findOne(['id'=>Yii::$app->request->get('id')])){return $this->redirect(['donate/mywish']);}
+		if($wish->toWho != Yii::$app->user->identity->id){return $this->redirect(['donate/mywish']);}
 
 		//防止在修改期间恰逢被审核通过导致错误覆盖,因为审核通过后不能再修改
 		if($wish->status != 0)
