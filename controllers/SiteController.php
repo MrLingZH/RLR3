@@ -296,7 +296,7 @@ class SiteController extends Controller
     public function actionRegister_school()
     {
         //判断是否已经是学校的见证人，如果是，驳回申请。
-        if(Yii::$app->user->identity->degree == 'witness')
+        if(Yii::$app->user->identity->degree == 'witness' || Yii::$app->user->identity->degree == 'admin')
         {
             return $this->render('registerfailed_school',['status'=>3]);
         }

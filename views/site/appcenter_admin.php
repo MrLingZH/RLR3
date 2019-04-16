@@ -104,7 +104,7 @@ function printtablebody($column1,$column2,$column3,$column4,$column5,$column6,$c
                         </td>
                         <td>
                             '.Html::a('同意', Url::to(['admin/agreed_apply_school','id'=>$column1]),['class' => 'btn btn-success btn-xs']).'
-                            '.Html::a('拒绝', Url::to(['admin/disagree_apply_school','id'=>$column1]),['class' => 'btn btn-success btn-xs']).'
+                            '.Html::a('拒绝', Url::to(['admin/disagreed_apply_school','id'=>$column1]),['class' => 'btn btn-success btn-xs']).'
                         </td>
                     </tr>';
 }
