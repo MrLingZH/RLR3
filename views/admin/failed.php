@@ -12,6 +12,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="site-login">
 	<h1><?= Html::encode($this->title) ?></h1>
-	<p></p>
+	<p>状态：<?= $status ?></p>
 	<?= Html::a('返回到应用中心',Url::to(['site/appcenter']),['class'=>'btn btn-success']) ?>
 </div>

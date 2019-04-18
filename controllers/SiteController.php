@@ -16,6 +16,7 @@ use app\models\User;
 use app\models\School;
 use app\models\Wish;
 use app\models\Banji;
+use app\models\Message;
 
 class SiteController extends Controller
 {
@@ -229,8 +230,8 @@ class SiteController extends Controller
             $count = [
                 'wish' => Wish::getMyWishCount($user->id),//我的心愿
                 'banji' => Banji::getMyBanjiCount($user->id),//创建的团体
-                'message' => 0,//我的站内消息
-                'donate' => 0,//我的资助
+                'message' => count(Message::findAll(['toWho'=>Yii::$app->user->identity->id])),//我的站内消息
+                'donate' => count(Wish::findAll(['fromWho'=>Yii::$app->user->identity->id])),//我的资助
                 'join' => 0,//加入的团体
             ];
 
@@ -269,7 +270,7 @@ class SiteController extends Controller
                 'status0' => count(School::findAll(['registerresult'=>0])),//待审批
                 'status1' => count(School::findAll(['registerresult'=>1])),//审核通过
                 'status2' => count(School::findAll(['registerresult'=>2])),//审核不通过
-                'message' => 0,//我的站内消息
+                'message' => count(Message::findAll(['toWho'=>Yii::$app->user->identity->id])),//我的站内消息
             ];
 
             $affair = [

@@ -31,8 +31,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     <br><?php echo Html::img($user['headimage'],['class' =>'img-responsive','width'=>'150px','alt'=>'用户未上传头像']);?>
                     <br><?= Html::a('上传头像', Url::to(['site/uploadheadimage']),['class' => 'btn btn-info', 'name' => 'view-button']) ?>&nbsp
                     <?= Html::a('完善个人资料', ['site/edituserdata'], ['class' => 'btn btn-success btn-sm']); ?><br><br>
-                    <a href=<?=Url::to(['message/messagetome'])?> class="list-group-item"><span class="badge"><?= $count['message'] ?></span>我的站内信</a>
-                    <a href=<?=Url::to(['message/fillinmessage'])?> class="list-group-item">发送站内信</a>
+                    <a href=<?=Url::to(['message/index'])?> class="list-group-item"><span class="badge"><?= $count['message'] ?></span>我的站内信</a>
+                    <a href=<?=Url::to(['message/write'])?> class="list-group-item">发送站内信</a>
                     <a href=<?=Url::to(['donate/mywish'])?> class="list-group-item"><span class="badge"><?= $count['wish'] ?></span>我的心愿</a>
                     <a href=<?=Url::to(['donate/mydonation'])?> class="list-group-item"><span class="badge"><?= $count['donate'] ?></span>我的资助</a>
                     <a href=<?=Url::to(['banji/mybanji'])?> class="list-group-item"><span class="badge"><?= $count['banji'] ?></span>创建的团体</a>  

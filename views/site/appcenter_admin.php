@@ -25,8 +25,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="row">
         <div class="col-md-3">
             <div class="list-group">
-                    <a href=<?=Url::to(['message/messagetome'])?> class="list-group-item"> <span class="badge"><?= $count['message'] ?></span>我的站内信</a>
-                    <a href=<?=Url::to(['message/fillinmessage'])?> class="list-group-item"> 发送站内信</a>
+                    <a href=<?=Url::to(['message/index'])?> class="list-group-item"> <span class="badge"><?= $count['message'] ?></span>我的站内信</a>
+                    <a href=<?=Url::to(['message/write'])?> class="list-group-item"> 发送站内信</a>
                     <a href=<?=Url::to(['event/indextome'])?> class="list-group-item">我的审批</a>
                     <a href=<?=Url::to(['news/fillinnewsbyadmin'])?> class="list-group-item"> 首页信息发布</a> 
                     <a href=<?=Url::to(['event/eventlist','result'=>'unjudge'])?> class="list-group-item">

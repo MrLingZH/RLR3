@@ -7,6 +7,7 @@ use yii\web\Controller;
 use app\models\School;
 use app\models\User;
 use app\models\SimpleForm;
+use app\models\Message;
 
 class AdminController extends Controller
 {
@@ -21,11 +22,20 @@ class AdminController extends Controller
 
 		$user = User::findOne($school->witnessid);
 		$user->degree = 'witness';
-		if($school->save() && $user->save())
+		if($school->save())
 		{
-			return $this->render('succeed');
+			if($user->save())
+			{
+				return $this->render('succeed');
+			}
+			$school->name = null;
+			$school->registerresult = 0;
+			$school->subDomain = null;
+			$school->schoolnumber = null;
+			$school->foundtime = null;
+			return $this->render('failed',['status'=>1]);
 		}
-		return $this->render('failed');
+		return $this->render('failed',['status'=>0]);
 	}
 
 	public function actionDisagreed_apply_school()
@@ -40,9 +50,23 @@ class AdminController extends Controller
 			$school->disagreedreson = $model->reson;
 			if($school->save())
 			{
-				return $this->render('succeed');
+				$message = new Message;
+				$message->fromWho = Yii::$app->user->identity->id;
+				$message->toWho = $school->witnessid;
+				$message->title = "学校注册申请结果";
+				$message->content = "您于".$school->registertime."申请的“学校注册”已被拒绝，拒绝理由为：".$school->disagreedreson;
+				$message->status = 0;
+				$message->sendTime = date("Y-m-d H:i:s");
+				if($message->send())
+				{
+					return $this->render('succeed');
+				}
+				$school->registerresult = 0;
+				$school->disagreedreson = null;
+				$school->save();
+				return $this->render('failed',['status'=>1]);
 			}
-			return $this->render('failed');
+			return $this->render('failed',['status'=>0]);
 		}
 
 		return $this->render('disagreed',['model'=>$model]);
