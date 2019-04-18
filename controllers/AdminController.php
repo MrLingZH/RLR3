@@ -33,6 +33,7 @@ class AdminController extends Controller
 			$school->subDomain = null;
 			$school->schoolnumber = null;
 			$school->foundtime = null;
+			$school->save();
 			return $this->render('failed',['status'=>1]);
 		}
 		return $this->render('failed',['status'=>0]);
