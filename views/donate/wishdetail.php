@@ -8,7 +8,7 @@ use yii\widgets\DetailView;
 
 $this->title = '资助详情';
 $this->params['breadcrumbs'][] = ['label'=>'应用中心','url'=>\yii\helpers\Url::to(['site/appcenter'])];
-$this->params['breadcrumbs'][] = ['label'=>'我的心愿','url'=>\yii\helpers\Url::to(['donate/mywish'])];
+//$this->params['breadcrumbs'][] = ['label'=>'我的心愿','url'=>\yii\helpers\Url::to(['donate/mywish'])];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <a href=<?=Yii::$app->request->getReferrer()?>>返回列表</a>

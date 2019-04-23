@@ -230,8 +230,8 @@ class SiteController extends Controller
             $count = [
                 'wish' => Wish::getMyWishCount($user->id),//我的心愿
                 'banji' => Banji::getMyBanjiCount($user->id),//创建的团体
-                'message' => count(Message::findAll(['toWho'=>Yii::$app->user->identity->id])),//我的站内消息
-                'donate' => count(Wish::findAll(['fromWho'=>Yii::$app->user->identity->id])),//我的资助
+                'message' => count(Message::findAll(['toWho'=>$user->id])),//我的站内消息
+                'donate' => count(Wish::findAll(['fromWho'=>$user->id])),//我的资助
                 'join' => 0,//加入的团体
             ];
 
@@ -270,7 +270,7 @@ class SiteController extends Controller
                 'status0' => count(School::findAll(['registerresult'=>0])),//待审批
                 'status1' => count(School::findAll(['registerresult'=>1])),//审核通过
                 'status2' => count(School::findAll(['registerresult'=>2])),//审核不通过
-                'message' => count(Message::findAll(['toWho'=>Yii::$app->user->identity->id])),//我的站内消息
+                'message' => count(Message::findAll(['toWho'=>$user->id])),//我的站内消息
             ];
 
             $affair = [
@@ -287,6 +287,31 @@ class SiteController extends Controller
                         ]);
 
             return $this->render('appcenter_admin',[
+                'user'=>$user,
+                'count'=>$count,
+                'provider'=>$provider,
+            ]);
+        }
+        else if($user->degree == 'witness')
+        {
+            $count = [
+                'result0' => count(Wish::findAll(['result'=>0,'school'=>$user->audit_school])),//待审核
+                'result1' => count(Wish::findAll(['result'=>1,'school'=>$user->audit_school])),//审核通过
+                'result2' => count(Wish::findAll(['result'=>[2,3],'school'=>$user->audit_school])),//审核不通过
+                'status1' => count(Wish::findAll(['status'=>1,'school'=>$user->audit_school])),//待定资助周期
+                'status3' => count(Wish::findAll(['status'=>3,'school'=>$user->audit_school])),//资助进行中
+                'status4' => count(Wish::findAll(['status'=>4,'school'=>$user->audit_school])),//资助完成
+                'message' => count(Message::findAll(['toWho'=>$user->id])),//我的站内消息
+            ];
+
+            $affair = [];
+            $provider = new \yii\data\ArrayDataProvider([
+                            'allModels' => $affair,
+                            'pagination' => ['pageSize' => 10],
+                            'key' => 'id',
+                        ]);
+
+            return $this->render('appcenter_witness',[
                 'user'=>$user,
                 'count'=>$count,
                 'provider'=>$provider,

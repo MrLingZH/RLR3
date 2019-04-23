@@ -4,14 +4,20 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\bootstrap\ActiveForm;
 
-$this->title = '拒绝';
+$trans_title = [
+	'wish_agreed'=>'同意',
+	'wish_disagreed'=>'拒绝',
+	'wish_delete'=>'删除',
+];
+$this->title = $trans_title[Yii::$app->controller->action->id];
 $this->params['breadcrumbs'][] = ['label'=>'应用中心','url'=>\yii\helpers\Url::to(['site/appcenter'])];
+$this->params['breadcrumbs'][] = ['label'=>'心愿申请','url'=>\yii\helpers\Url::to(['donate/list_apply'])];
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
 
 <div class="site-login">
-	<h1>请填写拒绝理由</h1>
+	<h1>请填写<?=$trans_title[Yii::$app->controller->action->id]?>理由</h1>
 	<?php $form = ActiveForm::begin([
 		'id' => 'register-form',
 		'layout' => 'horizontal',

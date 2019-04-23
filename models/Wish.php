@@ -24,7 +24,7 @@ use Yii;
  * @property string $applytime 握手申请时间
  * @property string $timeout 握手超时时间
  * @property string $installment 分期方式
- * @property int $result 审核结果,0=待处理，1=同意，2=拒绝
+ * @property int $result 审核结果,0=待处理，1=同意，2=拒绝，3=删除
  * @property string $reason 同意过审原因
  * @property int $status 状态，0=等待资助，1=等待商议资助计划，2=投票进行中，3=资助进行中，4=资助完成，5=逾期。
  * @property string $guardian_name 监护人姓名

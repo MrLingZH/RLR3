@@ -9,19 +9,19 @@ class SimpleForm extends Model
 {
 	//该表单为各种简单的表单集合
 	
-	public $reson;//理由
+	public $reason;//理由
 	
 	public function rules()
 	{
 		return [
-			[['reson'],'required'],
+			[['reason'],'required'],
 		];
 	}
 
 	public function attributeLabels()
 	{
 		return [
-			'reson'=>'理由',
+			'reason'=>'理由',
 		];
 	}
 

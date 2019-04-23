@@ -20,7 +20,7 @@ use Yii;
  * @property string $registername 申请时等待审核的临时学校名
  * @property string $schoolnumber 学校代码
  * @property string $foundtime 通过审核正式成立的时间
- * @property string $disagreedreson 拒绝理由
+ * @property string $disagreedreason 拒绝理由
  */
 class School extends \yii\db\ActiveRecord
 {
@@ -40,7 +40,7 @@ class School extends \yii\db\ActiveRecord
         return [
             [['minpercent', 'registerresult', 'witnessid'], 'integer'],
             [['registertime','foundtime'], 'safe'], 
-            [['name', 'address', 'pictures', 'subDomain', 'type', 'registername','schoolnumber','disagreedreson'], 'string', 'max' => 255],
+            [['name', 'address', 'pictures', 'subDomain', 'type', 'registername','schoolnumber','disagreedreason'], 'string', 'max' => 255],
         ];
     }
 
@@ -63,7 +63,7 @@ class School extends \yii\db\ActiveRecord
             'registername' => 'Registername',
             'schoolnumber' => 'Schoolnumber',
             'foundtime' => 'Foundtime',
-            'disagreedreson' => 'Disagreedreson',
+            'disagreedreason' => 'Disagreedreason',
         ];
     }
 

@@ -22,12 +22,13 @@ class MessageController extends Controller
 
 	public function actionIndex()
 	{
-		$message = Message::find(['toWho'=>Yii::$app->user->identity->id])->orderBy(['sendTime'=>SORT_DESC])->all();//SORT_ASC升序，SORT_DESC降序
-
-		foreach($message as $value)
+		if($message = Message::find()->where(['toWho'=>Yii::$app->user->identity->id])->orderBy(['sendTime'=>SORT_DESC])->all())//SORT_ASC升序，SORT_DESC降序
 		{
-			$value->toWho = User::findOne(['id'=>$value->toWho])->username;
-			$value->fromWho = User::findOne(['id'=>$value->fromWho])->username;
+			foreach($message as $value)
+			{
+				$value->toWho = User::findOne(['id'=>$value->toWho])->username;
+				$value->fromWho = User::findOne(['id'=>$value->fromWho])->username;
+			}
 		}
 
 		$provider = new \yii\data\ArrayDataProvider([
