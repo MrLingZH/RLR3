@@ -31,13 +31,20 @@ class SiteController extends Controller
                 'only' => [
                     'logout',
                     'appcenter',
+                    'register',
+                    'register2',
                     'register_school',
                 ],
                 'rules' => [
                     [
-                        'actions' => ['logout','appcenter','register_school'],
+                        'actions' => ['logout','appcenter'],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['register','register2','register_school'],
+                        'allow' => true,
+                        'roles' => ['?'],
                     ],
                 ],
             ],
@@ -140,65 +147,11 @@ class SiteController extends Controller
 
     public function actionRegister()
     {
-        if(!Yii::$app->user->isGuest){return $this->goBack();}
-
         $model = new RegisterForm;
 
-        if($model->load(Yii::$app->request->post()))
+        if($model->load(Yii::$app->request->post()) && $model->beforSubmit())
         {
-            $user = User::findByEmail($model->email);;
-            //查询该邮箱用户是否存在，如果该邮箱用户不存在，则添加到用户表，并生成验证码发送邮件
-            if($user == null)
-            {
-                $user = new User;
-                $user->email = $model->email;
-                $user->isVerfied = 0;
-                $user->verifyCode = $model->getVerifyCode();
-                $user->save();
-                
-                //这里是发邮件代码
-                if(!$model->sendEmail())
-                {
-                    return $this->render('registerfailed',['status'=>2]);
-                }
-            }
-            //如果存在且验证状态为1，则已被注册,否则未验证，更新验证码并重新发送邮件
-            if($user)
-            {
-                if($user->isVerfied == 1)
-                {
-                    return $this->render('registerfailed',['status'=>1]);
-                }
-                $user->verifyCode = $model->getVerifyCode();
-                $user->save();
-
-                //这里是发邮件代码
-                if(!$model->sendEmail())
-                {
-                    return $this->render('registerfailed',['status'=>2]);
-                }
-            }
-
-            return $this->redirect(['site/register2','email'=>$model->email]);//执行本控制器中的Actionregister2,并将email传过去
-        }
-        return $this->render('register',[
-            'model'=>$model,
-        ]);
-    }
-
-    public function actionRegister2()
-    {
-        if(!Yii::$app->user->isGuest){return $this->goBack();}
-
-        $model = new RegisterForm2;
-
-        $model->email = Yii::$app->request->get('email');//redirect实现控制器间的转跳，但method只能是get
-
-        if(!$model->email){return $this->redirect(['site/register']);}//检测第一步是否已提交邮箱，没有则返回第一步
-
-        if($model->load(Yii::$app->request->post()) && $model->register())
-        {
-            $user = User::findByEmail($model->email);
+            $user = User::findOne(['email'=>$model->email]);
             $user->username = $model->username;
             $user->password = password_hash($model->password, PASSWORD_DEFAULT);//给密码进行哈希加密
             $user->school = (int)$model->schoolid;
@@ -209,16 +162,76 @@ class SiteController extends Controller
             $user->money = 0;
             $user->register_time = date("Y-m-d H:i:s");
             $user->save();
-
             return $this->render('registersucceed');
         }
-
         $allschool = School::findAllSchool();
 
-        return $this->render('register2',[
+        return $this->render('register',[
             'model'=>$model,
             'allschool'=>$allschool,
         ]);
+    }
+
+    public function actionRegister_school()
+    {
+        $model = new RegisterForm_School;
+        
+        if($model->load(Yii::$app->request->post()) && $model->beforSubmit())
+        {
+            $user = User::findOne(['email'=>$model->email]);
+            $user->username = $model->username;
+            $user->password = password_hash($model->password, PASSWORD_DEFAULT);
+            $user->tel = $model->tel;
+            $user->isVerfied = 1;
+            $user->degree = 'witness';
+            $user->headimage = './upload_user/demo/man.png';
+            $user->money = 0;
+            $user->register_time = date("Y-m-d H:i:s");
+            $user->save();
+
+            $school = new School;
+            $school->witnessid = $user->id;
+            $school->registerresult = 0;
+            $school->minpercent = 10;
+            $school->registername = $model->schoolname;
+            $school->registertime = date("Y-m-d H:i:s");
+            $school->save();
+            return $this->render('registersucceed');
+        }
+        return $this->render('register',['model'=>$model]);
+    }
+
+    public function actionGet_verify_code()
+    {
+        $email = $_POST['email'];
+        $user = User::findOne(['email'=>$email]);
+        if($user)
+        {
+            if($user->isVerfied == 1)
+            {
+                $status = 1;//邮箱已被注册
+            }
+            else
+            {
+                $user->updateVerifyCode();
+                if($user->sendVerifyCode()){$status = 0;}
+                else{$status = 2;}
+            }
+        }
+        else
+        {
+            $user = new User;
+            $user->email = $email;
+            $user->updateVerifyCode();
+            if($user->sendVerifyCode()){$status = 0;}
+            else{$status = 2;}
+        }
+
+        $data = [
+            'status'=>$status,
+        ];
+
+        return json_encode($data);
     }
 
     public function actionAppcenter()
@@ -317,44 +330,5 @@ class SiteController extends Controller
                 'provider'=>$provider,
             ]);
         }
-    }
-
-    public function actionRegister_school()
-    {
-        //判断是否已经是学校的见证人，如果是，驳回申请。
-        if(Yii::$app->user->identity->degree == 'witness' || Yii::$app->user->identity->degree == 'admin')
-        {
-            return $this->render('registerfailed_school',['status'=>3]);
-        }
-
-        $model = new RegisterForm_school;
-        
-        if($model->load(Yii::$app->request->post()) && $model->beforSubmit())
-        {
-            if($school = School::findOne(['witnessid'=>Yii::$app->user->identity->id,'registerresult'=>0]))
-            {
-                //如果能查询到状态为待审核的数据，则更新那条数据
-            }
-            else
-            {
-                //否则新建一条数据
-                $school = new School;
-                $school->witnessid = Yii::$app->user->identity->id;
-                $school->registerresult = 0;
-                $school->minpercent = 10;
-            }
-            $school->registername = $model->name;
-            $school->registertime = date("Y-m-d H:i:s");
-            if($school->save())
-            {
-                return $this->render('registersucceed_school');
-            }
-            else
-            {
-                return $this->render('registerfailed_school',['status'=>2]);
-            }
-        }
-
-        return $this->render('register_school',['model'=>$model]);
     }
 }

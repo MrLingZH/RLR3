@@ -7,14 +7,42 @@ use yii\base\Model;
 
 class RegisterForm extends Model
 {
+	public $username;
+	public $password;
+	public $repassword;
 	public $email;
+	public $tel;
 	public $code;
+	public $acknowledgement = true;//是否同意使用协议
+	public $schoolid;
+	public $schoolnumber;
 	
 	public function rules()
 	{
 		return [
+			['username', 'filter', 'filter' => 'trim'],
+            ['username', 'required'],
+            ['username', 'string', 'min' => 2, 'max' => 16],
+            ['username','match','pattern'=>'/^[\x{4e00}-\x{9fa5}A-Za-z0-9]{1,16}$/u','message'=>'用户名不能含有特殊字符'],
+            ['username','validateUsername'],
+            
+            ['code','validateCode'],
+			
+            [['password','repassword'], 'required'],
+			[['password','repassword'], 'string', 'min' => 6],
+			['repassword', 'compare', 'compareAttribute' => 'password','message'=>'两次输入的密码不一致！'],
+
+			['code','required'],
+			['schoolid','required'],
+			['schoolnumber','required'],
+			['tel','match','pattern'=>'/^1[34578]\d{9}$/','message'=>'手机号码格式错误'],
+
+			['acknowledgement', 'boolean'],
+			['acknowledgement','compare','compareValue' => true, 'operator' => '==','message'=>'必须同意使用协议方可注册'],
+
 			['email','required'],
 			['email','email'],
+			['email','validateEmail'],
 		];
 	}
 
@@ -22,28 +50,56 @@ class RegisterForm extends Model
 	{
 		return [
 			'email'=>'电子邮箱',
+			'code'=>'验证码',
+			'username'=>'用户名',
+			'password'=>'密码',
+			'repassword'=>'重复密码',
+			'tel'=>'电话号码(可不填)',
+			'schoolid'=>'选择社区',
+			'schoolnumber'=>'社区代码',
 		];
 	}
 
-	public function getVerifyCode()
-	{
-		$this->code = (string)mt_rand(10000,99999);
-		return $this->code;
-	}
+	public function validateUsername($attribute, $params)
+    {
+        $usernameExist = User::findByUsername($this->username);
+        if (!$this->hasErrors()) {
+            if($usernameExist){
+                $this->addError($attribute,'该用户名已被注册！');
+            }
+        }
+    }
 
-	public function sendEmail()
-	{
-		$to = $this->email;
-        $subject = "《人恋人公益平台》注册码";
-        $body = "亲爱的".$this->email."您好，这是您的注册验证码：".$this->code."。感谢您的注册！";
+    public function validateEmail($attribute, $params)
+    {
+        if (!$this->hasErrors()) {
+            if($t_user = User::findOne(['email'=>$this->email])){
+            	if($t_user->isVerfied == 1)
+            	{
+            		$this->addError($attribute,'该邮箱已被注册！');
+            	}
+            }
+        }
+    }
 
-		$mail = Yii::$app->mailer->compose(); //加载配置的组件
-        $mail->setTo($to); //要发给谁
-        $mail->setSubject($subject); //标题 主题
-        $mail->setHtmlBody($body); //要发送的内容
-        
-        return $mail->send();
-	}
+    public function validateCode($attribute, $params)
+    {
+        $user = User::findByEmail($this->email);
+        if (!$this->hasErrors()) {
+            if($user->verifyCode != $this->code){
+                $this->addError($attribute,'验证码不正确！');
+            }
+        }
+    }
+
+    public function beforSubmit()
+    {
+    	if($this->validate())
+    	{
+    		return true;
+    	}
+    	return false;
+    }
 }
 
 

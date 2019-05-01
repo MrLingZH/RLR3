@@ -113,4 +113,24 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return password_verify($password,$this->password);//哈希比较，输入的密码与数据库中的哈希加密过的密码进行比较。
     }
+
+    public function updateVerifyCode()
+    {
+        $this->verifyCode = (string)mt_rand(10000,99999);
+        $this->save();
+    }
+
+    public function sendVerifyCode()
+    {
+        $to = $this->email;
+        $subject = "《人恋人公益平台》注册码";
+        $body = "亲爱的".$this->email."您好，这是您的注册验证码：".$this->verifyCode."。感谢您的注册！";
+
+        $mail = Yii::$app->mailer->compose(); //加载配置的组件
+        $mail->setTo($to); //要发给谁
+        $mail->setSubject($subject); //标题 主题
+        $mail->setHtmlBody($body); //要发送的内容
+        
+        return $mail->send();
+    }
 }

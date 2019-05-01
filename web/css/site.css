@@ -113,3 +113,26 @@ a.desc:after {
 .nav > li > form > button.logout:focus {
     outline: none;
 }
+
+#but-get-verify-code
+{
+    background-color: #55f;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#but-get-verify-code:hover
+{
+    background-color: #88f;
+    cursor: pointer;
+}
+
+#font-get-verify-code
+{
+    color: #f00;
+}
