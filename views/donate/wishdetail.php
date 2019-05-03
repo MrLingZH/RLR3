@@ -20,8 +20,9 @@ $trans_sex = [
 ];
 $trans_status = [
     0=>'等待资助人',
-    1=>'申请已同意',
-    2=>'申请已拒绝',
+    1=>'等待商议资助计划',
+    2=>'投票进行中',
+    3=>'资助进行中',
 ];
 if(($wish['result'] == 1) && (Yii::$app->user->identity->degree == 'vip') && (Yii::$app->user->identity->username!=$toWho['username']) && ($wish['status']==0))
 {

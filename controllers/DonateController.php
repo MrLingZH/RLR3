@@ -94,8 +94,8 @@ class DonateController extends Controller
 		if(!$wish = Wish::findOne(['id'=>Yii::$app->request->get('id')])){return $this->redirect(['donate/mywish']);}
 		if(!(Yii::$app->user->identity->id == $wish->toWho || Yii::$app->user->identity->audit_school == $wish->school)){return $this->redirect(['donate/mywish']);}
 
-		//防止在修改期间恰逢被审核通过导致错误覆盖,因为审核通过后不能再修改
-		if($wish->status != 0)
+		//防止在修改期间恰逢被审核通过导致错误覆盖,因为审核通过后不能再修改,但见证人可以。
+		if($wish->status != 0 && Yii::$app->user->identity->degree != 'witness')
 		{
 			return $this->render('error',['message'=>'请求失败！该心愿的审核状态已发生改变，若返回查看页面后未发生变化，请刷新页面。']);
 		}
@@ -126,7 +126,6 @@ class DonateController extends Controller
 			$wish->wishtime = date("Y-m-d H:i:s");
 			if(!$wish->save()){return $this->render('error',['message'=>'请求失败！']);}
 
-			//return $this->redirect(['donate/wishdetail','id'=>$wish->id]);
 			return $this->render('editsucceed',[
 				'id'=>$wish->id,
 			]);
@@ -140,22 +139,6 @@ class DonateController extends Controller
 			'wish'=>$wish,
 		]);
 	}
-
-	/*public function actionList_apply()
-	{
-		$wish = Wish::find()->where(['school'=>Yii::$app->user->identity->audit_school,'result'=>0])->orderBy(['wishtime'=>SORT_DESC])->all();
-        foreach($wish as $value)
-        {
-            $value->toWho = User::findOne(['id'=>$value->toWho])->username;
-            $value->school = School::findOne(['id'=>$value->school])->name;
-        }
-        $provider = new \yii\data\ArrayDataProvider([
-                            'allModels' => $wish,
-                            'pagination' => ['pageSize' => 10],
-                            'key' => 'id',
-                        ]);
-		return $this->render('wish_supply_list',['provider'=>$provider]);
-	}*/
 
 	public function actionWish_supply_list()
 	{
@@ -323,6 +306,63 @@ class DonateController extends Controller
 
 		$toWho = User::findOne(['id'=>$wish->toWho])->username;
 		return $this->render('donatesucceed',['toWho'=>$toWho]);
+	}
+
+	public function actionMydonation()
+	{
+		$wish = Wish::find()->where(['fromWho'=>Yii::$app->user->identity->id])->orderBy(['wishtime'=>SORT_DESC])->all();
+		$title = '我的资助';
+		foreach($wish as $value)
+        {
+            $value->toWho = User::findOne(['id'=>$value->toWho])->username;
+            $value->school = School::findOne(['id'=>$value->school])->name;
+        }
+        $provider = new \yii\data\ArrayDataProvider([
+                            'allModels' => $wish,
+                            'pagination' => ['pageSize' => 10],
+                            'key' => 'id',
+                        ]);
+		return $this->render('wish_supply_list',[
+			'provider'=>$provider,
+			'title0'=>$title,
+		]);
+	}
+
+	public function actionUpdate_wish_status()
+	{
+		$status = Yii::$app->request->get('status');
+		$wish = Wish::findOne(['id'=>Yii::$app->request->get('id')]);
+		switch($status)
+		{
+			case '0':
+				$wish->status = 0;
+				$wish->save();
+				break;
+			case 1:
+				$wish->status = 1;
+				$wish->save();
+				break;
+			case 2:
+				$wish->status = 2;
+				$wish->save();
+				break;
+			case 3:
+				$wish->status = 3;
+				$wish->save();
+				break;
+			case 4:
+				$wish->status = 4;
+				$wish->save();
+				break;
+			case 5:
+				$wish->status = 5;
+				$wish->save();
+				break;
+			default:
+				return $this->render('error',['message'=>'状态错误']);
+				break;
+		}
+		return $this->render('succeed_update');
 	}
 
 }

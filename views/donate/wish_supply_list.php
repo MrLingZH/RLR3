@@ -99,10 +99,10 @@ function printtablebody($model,$title,$vote)
                         {
                             echo Html::a('修改', Url::to(['donate/editwish','id'=>$model['id']]),['class' => 'btn btn-success btn-xs']);
                         } 
-                        else if(($model['status']==1))
+                        else if(($model['status']==1) && (Yii::$app->user->identity->degree=='witness'))
                         {
-                            echo Html::a('握手计划', Url::to(['donate/editdonate','id'=>$model['id']]),['class' => 'btn btn-success btn-xs']).'&nbsp';
-                            echo Html::a('开始执行', Url::to(['donate/updatedonatemodel','id'=>$model['id'],'status'=>'in_progress']),['class' => 'btn btn-success btn-xs']).'&nbsp';
+                            echo Html::a('握手计划', Url::to(['donate/editwish','id'=>$model['id']]),['class' => 'btn btn-success btn-xs']).'&nbsp';
+                            echo Html::a('开始执行', Url::to(['donate/update_wish_status','id'=>$model['id'],'status'=>'3']),['class' => 'btn btn-success btn-xs']).'&nbsp';
                         }
                         else if($title=='我的心愿' && $model['result']==2)
                         {
