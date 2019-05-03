@@ -91,7 +91,7 @@ function printtablebody($model,$title,$vote)
                         {
                            echo Html::a('加入投票', Url::to(['vote/addinvote','donateid'=>$model['id'],'voteid'=>$vote->id]),['class' => 'btn btn-success btn-xs']);
                         }
-                        else if($title=='需要握手的人')
+                        else if($title=='资助他人')
                         {
                            echo Html::a('握手', Url::to(['donate/donate','id'=>$model['id']]),['class' => 'btn btn-success btn-xs']);
                         }

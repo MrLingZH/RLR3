@@ -16,6 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 $trans_sex = [
 	'man'=>'男',
 	'woman'=>'女',
+	null=>'未知',
 ];
 $trans_status = [
     0=>'等待资助人',

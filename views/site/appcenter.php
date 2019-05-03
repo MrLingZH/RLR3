@@ -61,7 +61,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row placeholders">
             <div class="col-xs-6 col-sm-3 placeholder">
               <img src=<?=Yii::$app->request->baseUrl.'/image/dream.gif'?> class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4><?= Html::a('资助他人', Url::to(['donate/needdonatelist']),['class' => 'btn btn-primary', 'name' => 'view-button']) ?>
+              <h4><?= Html::a('资助他人', Url::to(['donate/wish_supply_list','status'=>0,'result'=>1]),['class' => 'btn btn-primary', 'name' => 'view-button']) ?>
                 </h4>
             </div>
              <div class="col-xs-6 col-sm-3 placeholder">

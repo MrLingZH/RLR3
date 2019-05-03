@@ -161,7 +161,7 @@ class DonateController extends Controller
 	{
 		$result = Yii::$app->request->get('result');
 		$status = Yii::$app->request->get('status');
-		$audit_school = Yii::$app->user->identity->audit_school;
+		$user = Yii::$app->user->identity;
 		if($result == 0)
 		{
 			$wish = Wish::find()->where(['school'=>$audit_school,'result'=>0])->orderBy(['wishtime'=>SORT_DESC])->all();
@@ -171,27 +171,31 @@ class DonateController extends Controller
 		{
 			switch($status)
 			{
+				case '0'://如果是0而非'0'，则等价于default
+					$wish = Wish::find()->where(['school'=>$user->school,'result'=>1,'status'=>0])->andWhere(['not',['toWho'=>$user->id]])->orderBy(['wishtime'=>SORT_DESC])->all();
+					$title = '资助他人';
+					break;
 				case 1:
-					$wish = Wish::find()->where(['school'=>$audit_school,'result'=>1,'status'=>1])->orderBy(['wishtime'=>SORT_DESC])->all();
+					$wish = Wish::find()->where(['school'=>$user->audit_school,'result'=>1,'status'=>1])->orderBy(['wishtime'=>SORT_DESC])->all();
 					$title = '待定资助周期';
 					break;
 				case 3:
-					$wish = Wish::find()->where(['school'=>$audit_school,'result'=>1,'status'=>3])->orderBy(['wishtime'=>SORT_DESC])->all();
+					$wish = Wish::find()->where(['school'=>$user->audit_school,'result'=>1,'status'=>3])->orderBy(['wishtime'=>SORT_DESC])->all();
 					$title = '资助进行中';
 					break;
 				case 4:
-					$wish = Wish::find()->where(['school'=>$audit_school,'result'=>1,'status'=>4])->orderBy(['wishtime'=>SORT_DESC])->all();
+					$wish = Wish::find()->where(['school'=>$user->audit_school,'result'=>1,'status'=>4])->orderBy(['wishtime'=>SORT_DESC])->all();
 					$title = '资助完成';
 					break;
 				default:
-					$wish = Wish::find()->where(['school'=>$audit_school,'result'=>1])->orderBy(['wishtime'=>SORT_DESC])->all();
+					$wish = Wish::find()->where(['school'=>$user->audit_school,'result'=>1])->orderBy(['wishtime'=>SORT_DESC])->all();
 					$title = '审核通过';
 					break;
 			}
 		}
 		else
 		{
-			$wish = Wish::find()->where(['school'=>$audit_school,'result'=>[2,3]])->orderBy(['wishtime'=>SORT_DESC])->all();
+			$wish = Wish::find()->where(['school'=>$user->audit_school,'result'=>[2,3]])->orderBy(['wishtime'=>SORT_DESC])->all();
 			$title = '审核未通过';
 		}
 		
@@ -308,6 +312,17 @@ class DonateController extends Controller
 		}
 
 		return $this->render('reason',['model'=>$model]);
+	}
+
+	public function actionDonate()
+	{
+		$wish = Wish::findOne(['id'=>Yii::$app->request->get('id')]);
+		$wish->fromWho = Yii::$app->user->identity->id;
+		$wish->status = 1;
+		$wish->save();
+
+		$toWho = User::findOne(['id'=>$wish->toWho])->username;
+		return $this->render('donatesucceed',['toWho'=>$toWho]);
 	}
 
 }
