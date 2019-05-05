@@ -12,6 +12,7 @@ use app\models\ContactForm;
 use app\models\RegisterForm;
 use app\models\RegisterForm2;
 use app\models\RegisterForm_school;
+use app\models\EdituserdataForm;
 use app\models\User;
 use app\models\School;
 use app\models\Wish;
@@ -330,5 +331,41 @@ class SiteController extends Controller
                 'provider'=>$provider,
             ]);
         }
+    }
+
+    public function actionGetcurrentuserdata()
+    {
+        $model = Yii::$app->user->identity;
+        $SingleViewModel = $model->getSingleView();
+        return $this->render('singleview',[
+            'SingleView' => $SingleViewModel,
+            'model' => $model,
+        ]);
+    }
+
+    public function actionEdituserdata()
+    {
+        $model = Yii::$app->user->identity;
+        $editform = new EdituserdataForm();
+        $editform->nickname = $model->nickname;//真名
+        $editform->sex = $model->sex;
+        $editform->username = $model->username;
+        $editform->email = $model->email;
+        $editform->tel = $model->tel;
+        $editform->id = $model->id;
+        //$editform->avatar_show = $model->avatar_show; //库中暂时无此字段，暂时阉割此功能
+
+        if ($editform->load(Yii::$app->request->post())){
+            if (!$editform->update()){
+                return $this->render('singleview',['model' => $model, 'editform' => $editform]);
+            }
+            return $this->redirect(['getcurrentuserdata']);
+        }
+
+        return $this->render('singleview',[
+            'model'=>$model,
+            'editform'=>$editform,
+        ]);
+
     }
 }

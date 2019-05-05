@@ -10,6 +10,7 @@ use yii\web\IdentityInterface;
  *
  * @property int $id
  * @property string $username
+ * @property string $nickname
  * @property string $email
  * @property string $password
  * @property string $sex
@@ -28,6 +29,17 @@ use yii\web\IdentityInterface;
  */
 class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
+    public $trans_sex = [
+        'man'=>'男',
+        'woman'=>'女',
+        null=>'未知',
+    ];
+
+    public $trans_verify = [
+        0=>'未验证',
+        1=>'已验证',
+        null=>'未知',
+    ];
     /**
      * {@inheritdoc}
      */
@@ -44,7 +56,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         return [
             [['isVerfied', 'money', 'audit_school', 'reg_school', 'school'], 'integer'],
             [['register_time'], 'safe'],
-            [['username', 'email', 'password', 'sex', 'degree', 'headimage', 'tel', 'idcard_upside', 'idcard_downside', 'verifyCode'], 'string', 'max' => 255],
+            [['username','nickname', 'email', 'password', 'sex', 'degree', 'headimage', 'tel', 'idcard_upside', 'idcard_downside', 'verifyCode'], 'string', 'max' => 255],
         ];
     }
 
@@ -56,6 +68,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         return [
             'id' => 'ID',
             'username' => 'Username',
+            'username' => 'Nickname',
             'email' => 'Email',
             'password' => 'Password',
             'sex' => 'Sex',
@@ -132,5 +145,29 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         $mail->setHtmlBody($body); //要发送的内容
         
         return $mail->send();
+    }
+
+    public function getSingleView()
+    {
+        $SingleViewResult = array(
+            'id'=>$this->id,
+            'username' => $this->username,
+            'nickname' => $this->nickname,
+            'email' => $this->email,
+            'degree'=> $this->degree,
+            'money' => $this->money,
+            'audit_school' => $this->audit_school,
+            'reg_school' => $this->reg_school,
+            'school' => $this->school,
+            'register_time' => $this->register_time,
+            //'register'=>$this->register,
+            //'help'=>$this->help,
+            'idcard_upside' => $this->idcard_upside,
+            'idcard_downside' => $this->idcard_downside,
+            'sex'=>isset($this->sex)? $this->trans_sex[$this->sex] : '未设置',
+            'tel'=>isset($this->tel)? $this->tel : '未设置',
+            'isVeified'=>$this->trans_verify[$this->isVerfied],
+            );
+        return $SingleViewResult;
     }
 }

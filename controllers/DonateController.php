@@ -27,6 +27,7 @@ class DonateController extends Controller
 			$wish->school = $model->schoolid;
 			$wish->count = $model->count;
 			$wish->description = $model->description;
+			$wish->donateinterval = 1;
 			$wish->totalMoney = $model->totalMoney;
 			$wish->installment = 'monthly';
 			$wish->result = 0;
@@ -80,7 +81,7 @@ class DonateController extends Controller
 		$toWho = User::findOne(['id'=>$wish->toWho]);
 
 		$data = [
-			'progress'=>'暂无',
+			'progress'=>$wish->getProgressView(),
 		];
 		return $this->render('wishdetail',[
 			'wish'=>$wish,
@@ -302,6 +303,7 @@ class DonateController extends Controller
 		$wish = Wish::findOne(['id'=>Yii::$app->request->get('id')]);
 		$wish->fromWho = Yii::$app->user->identity->id;
 		$wish->status = 1;
+		$wish->donatetime = date("Y-m-d H:i:s");
 		$wish->save();
 
 		$toWho = User::findOne(['id'=>$wish->toWho])->username;

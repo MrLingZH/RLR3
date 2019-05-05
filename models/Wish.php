@@ -91,4 +91,42 @@ class Wish extends \yii\db\ActiveRecord
     {
         return count(static::findAll(['toWho'=>$id]));
     }
+
+    public function getProgressView()
+    {
+    if($this->status != 3 && $this->status != 4){return '';}
+
+    $allreadyPercent = $this->sentCount/$this->count*100;
+    $needtoPercent = $this->donateinterval/$this->count*100;
+
+    $first = <<<EOF
+    <div class="progress-bar progress-bar-success active" role="progressbar" style="width:$allreadyPercent%">
+    已经划账期数:$this->sentCount
+    </div>
+EOF;
+
+    $rest = "";
+    for($i=$this->sentCount*($this->donateinterval);$i<$this->count;$i=$i+$this->donateinterval)
+    {
+        $date=date("Y-m-d",$this->donatetime + strtotime('+'.($i * $this->donateinterval).' month'));
+        if($i==$this->sentCount)
+        {
+            $class="progress-bar-danger active";
+        }
+        else
+        {
+            $class = "progress-bar-warning ";
+        }
+        $rest.="<div class=\"progress-bar progress-bar-striped $class\" role=\"progressbar\" style=\"width:$needtoPercent%\">$date</div>";
+    }
+
+    $rlt = <<<EOF
+    <div id="progressbar_$this->id">
+    $first
+    $rest
+    </div>
+EOF;
+
+    return $rlt;
+    }
 }
