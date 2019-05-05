@@ -337,6 +337,7 @@ class SiteController extends Controller
     {
         $model = Yii::$app->user->identity;
         $SingleViewModel = $model->getSingleView();
+        $SingleViewModel['school'] = School::findOne(['id'=>$SingleViewModel['school']])->name;
         return $this->render('singleview',[
             'SingleView' => $SingleViewModel,
             'model' => $model,
