@@ -10,11 +10,14 @@ class SimpleForm extends Model
 	//该表单为各种简单的表单集合
 	
 	public $reason;//理由
+	public $money;//金额
+	public $toWho;//对方用户名
 	
 	public function rules()
 	{
 		return [
-			[['reason'],'required'],
+			[['reason','money','toWho'],'required'],
+			['money','integer','min'=>1,'max'=>100000000],
 		];
 	}
 
@@ -22,6 +25,8 @@ class SimpleForm extends Model
 	{
 		return [
 			'reason'=>'理由',
+			'money'=>'金额',
+			'toWho'=>'对方用户名',
 		];
 	}
 

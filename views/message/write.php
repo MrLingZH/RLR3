@@ -58,7 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             foreach ($contacts as $vo)
                             {
                     ?>
-                                <div u="<?= $vo['username'] ?>" style="cursor: pointer;" onclick="selectUser(this)"><?= $vo['username'].'/'.$trans_degree[$vo['degree']] ?></div>
+                                <div class="txl_menber" u="<?= $vo['username'] ?>" style="cursor: pointer;" onclick="selectUser(this)"><?= $vo['username'].'/'.$trans_degree[$vo['degree']] ?></div>
                 <?php
                             }
                 ?>

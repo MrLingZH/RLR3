@@ -18,6 +18,7 @@ use app\models\School;
 use app\models\Wish;
 use app\models\Banji;
 use app\models\Message;
+use app\models\Trade;
 
 class SiteController extends Controller
 {
@@ -266,6 +267,15 @@ class SiteController extends Controller
                     'status' => '成功',
                 ],
             ];
+            $trade = Trade::find()->where(['toWho'=>$user->id])->orWhere(['fromWho'=>$user->id])->orderBy(['tradeTime'=>SORT_DESC])->all();
+            foreach ($trade as $value)
+            {
+                //如果类型是转账且自己是转账给别人的那个，或者类型为提现，则金额设为负值以表示支出
+                if(($value->type == 1 && $value->fromWho == $user->id) || $value->type == 3)
+                {
+                    $value->money = -$value->money;
+                }
+            }
             $provider = new \yii\data\ArrayDataProvider([
                             'allModels' => $trade,
                             'pagination' => ['pageSize' => 10],
@@ -367,6 +377,25 @@ class SiteController extends Controller
             'model'=>$model,
             'editform'=>$editform,
         ]);
+    }
 
+    public function actionGetuserdata()
+    {
+        if(!$username = Yii::$app->request->get('username')){$data = null;}
+        if($username == Yii::$app->user->identity->username){$data = null;}
+        else if($user = User::findOne(['username'=>$username]))
+        {
+            $data = [
+            'username'=>$user->username,
+            'tel'=>isset($user->tel) ? $user->tel : '未设置',
+            'email'=>$user->email,
+            ];
+        }
+        else
+        {
+            $data = null;
+        }
+
+        return json_encode($data);
     }
 }

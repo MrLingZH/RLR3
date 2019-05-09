@@ -100,6 +100,16 @@ function printtalehead($column1,$column2,$column3,$column4)
 }
 function printtablebody($column1,$column2,$column3,$column4,$column5,$class)
 {
+    $trans_type = [
+        1=>'转账',
+        2=>'充值',
+        3=>'提现',
+    ];
+    $trans_status = [
+        -1=>'失败',
+        0=>'待确认',
+        1=>'成功',
+    ];
     if($column4<0)
     {
         echo '<tr class="'.$class.'">
@@ -107,13 +117,13 @@ function printtablebody($column1,$column2,$column3,$column4,$column5,$class)
                             '.$column2.'
                         </td>
                         <td>
-                        '.$column3.'
+                        '.$trans_type[$column3].'
                         </td>
                         <td><span style="color:red">
                            '.$column4.'
                         </span></td>
                         <td>
-                        '.$column5.'
+                        '.$trans_status[$column5].'
                         </td>
                         <td>
                             '.Html::a('详情', Url::to(['money/view','id'=>$column1])).'
@@ -127,13 +137,13 @@ function printtablebody($column1,$column2,$column3,$column4,$column5,$class)
                             '.$column2.'
                         </td>
                         <td>
-                        '.$column3.'
+                        '.$trans_type[$column3].'
                         </td>
                         <td><span style="color:green">
                            +'.$column4.'
                         </span></td>
                         <td>
-                        '.$column5.'
+                        '.$trans_status[$column5].'
                         </td>
                         <td>
                             '.Html::a('详情', Url::to(['money/view','id'=>$column1])).'
@@ -152,7 +162,7 @@ function printtableend()
     printtalehead('时间','说明','金额','交易状态');
     foreach ($models as $model) 
     {
-        printtablebody($model['id'],$model['tradetime'],$model['type'],$model['money'],$model['status'],'');
+        printtablebody($model['id'],$model['tradeTime'],$model['type'],$model['money'],$model['status'],'');
     }
     printtableend();
     $maxButtonCount = 10;

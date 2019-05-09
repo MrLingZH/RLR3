@@ -87,6 +87,8 @@ function printtablebody($model,$title,$vote)
                            '.$trans_status[$model['status']].'
                         </td>
                         <td>';
+                        echo Html::a('详情', Url::to(['donate/wishdetail','id'=>$model['id']]),['class' => 'btn btn-success btn-xs']);
+                        echo '&nbsp;&nbsp';
                         if(($title=='选择投票对象') || ($title=='继续选择握手对象'))
                         {
                            echo Html::a('加入投票', Url::to(['vote/addinvote','donateid'=>$model['id'],'voteid'=>$vote->id]),['class' => 'btn btn-success btn-xs']);
@@ -95,7 +97,7 @@ function printtablebody($model,$title,$vote)
                         {
                            echo Html::a('握手', Url::to(['donate/donate','id'=>$model['id']]),['class' => 'btn btn-success btn-xs']);
                         }
-                        else if((Yii::$app->user->identity->username==$model['toWho'] || (Yii::$app->user->identity->id==$model['auditor'])) && ($model['status'] == 0))
+                        else if((Yii::$app->user->identity->username==$model['toWho'] || (Yii::$app->user->identity->id==$model['auditor'])) && ($model['result'] == 0))
                         {
                             echo Html::a('修改', Url::to(['donate/editwish','id'=>$model['id']]),['class' => 'btn btn-success btn-xs']);
                         } 
@@ -106,10 +108,9 @@ function printtablebody($model,$title,$vote)
                         }
                         else if($title=='我的心愿' && $model['result']==2)
                         {
-                            echo Html::a('再次申请', Url::to(['donate/updateapply','id'=>$model['id']]),['class' => 'btn btn-success btn-xs ']);
-                            echo '&nbsp;&nbsp'.Html::a('修改', Url::to(['donate/editdonate','id'=>$model['id']]),['class' => 'btn btn-success btn-xs ']);
+                            echo Html::a('修改', Url::to(['donate/editdonate','id'=>$model['id']]),['class' => 'btn btn-success btn-xs ']);
+                            echo '&nbsp;&nbsp'.Html::a('再次申请', Url::to(['donate/updateapply','id'=>$model['id']]),['class' => 'btn btn-success btn-xs ']);
                         }
-                        echo '&nbsp;&nbsp'.Html::a('详情', Url::to(['donate/wishdetail','id'=>$model['id']]),['class' => 'btn btn-success btn-xs']);
                         echo '</td>
                         </tr>';
     }

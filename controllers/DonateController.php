@@ -67,9 +67,11 @@ class DonateController extends Controller
                         'pagination' => ['pageSize' => 10],
                         'key' => 'id',
                     ]);
+		$title = '我的心愿';
 
-		return $this->render('mywish',[
+		return $this->render('wish_supply_list',[
 			'provider'=>$provider,
+			'title0'=>$title,
 		]);
 	}
 
