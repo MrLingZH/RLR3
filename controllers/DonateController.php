@@ -50,6 +50,26 @@ class DonateController extends Controller
 		]);
 	}
 
+	public function actionRewish()
+	{
+		$wish = Wish::findOne(['id'=>Yii::$app->request->get('id')]);
+		if(!$wish)
+		{
+			return $this->render('error',['message'=>'心愿不存在。']);
+		}
+		else if($wish->toWho != Yii::$app->user->identity->id)
+		{
+			return $this->render('error',['message'=>'心愿不属于自己。']);
+		}
+		else if($wish->result == 0 || $wish->result == 1 || $wish->result == 3)
+		{
+			return $this->render('error',['message'=>'心愿处于不可再申请的状态。']);
+		}
+		$wish->result = 0;
+		$wish->save();
+		return $this->actionMywish();
+	}
+
 	public function actionMywish()
 	{
 		if($mywish = Wish::findAll(['toWho'=>Yii::$app->user->identity->id]))

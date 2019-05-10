@@ -108,8 +108,8 @@ function printtablebody($model,$title,$vote)
                         }
                         else if($title=='我的心愿' && $model['result']==2)
                         {
-                            echo Html::a('修改', Url::to(['donate/editdonate','id'=>$model['id']]),['class' => 'btn btn-success btn-xs ']);
-                            echo '&nbsp;&nbsp'.Html::a('再次申请', Url::to(['donate/updateapply','id'=>$model['id']]),['class' => 'btn btn-success btn-xs ']);
+                            echo Html::a('修改', Url::to(['donate/editwish','id'=>$model['id']]),['class' => 'btn btn-success btn-xs ']);
+                            echo '&nbsp;&nbsp'.Html::a('再次申请', Url::to(['donate/rewish','id'=>$model['id']]),['class' => 'btn btn-success btn-xs ']);
                         }
                         echo '</td>
                         </tr>';
