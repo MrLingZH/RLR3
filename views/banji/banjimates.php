@@ -7,7 +7,17 @@ use yii\widgets\Pjax;
 
 $this->title = '我的团体';
 $this->params['breadcrumbs'][] = ['label'=>'应用中心','url'=>\yii\helpers\Url::to(['site/appcenter'])];
-$this->params['breadcrumbs'][] = ['label'=>'我创建的团体','url'=>\yii\helpers\Url::to(['banji/mybanji'])];
+$url_back = Yii::$app->request->getReferrer();
+$title_back = '上一级';
+if($url_back == 'http://localhost/rlr3/web/index.php?r=banji%2Fmybanji')
+{
+    $title_back = '我创建的团体';
+}
+else if($url_back == 'http://localhost/rlr3/web/index.php?r=banji%2Fbanjiincludeme')
+{
+    $title_back = '我加入的团体';
+}
+$this->params['breadcrumbs'][] = ['label'=>$title_back,'url'=>$url_back];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <h1>成员列表</h1>

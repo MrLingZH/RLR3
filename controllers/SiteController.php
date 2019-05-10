@@ -17,6 +17,7 @@ use app\models\User;
 use app\models\School;
 use app\models\Wish;
 use app\models\Banji;
+use app\models\RelationshipBanjiMates;
 use app\models\Message;
 use app\models\Trade;
 
@@ -247,26 +248,9 @@ class SiteController extends Controller
                 'banji' => Banji::getMyBanjiCount($user->id),//创建的团体
                 'message' => count(Message::findAll(['toWho'=>$user->id])),//我的站内消息
                 'donate' => count(Wish::findAll(['fromWho'=>$user->id])),//我的资助
-                'join' => 0,//加入的团体
+                'join' => count(RelationshipBanjiMates::findAll(['mates'=>$user->id])),//加入的团体
             ];
 
-            //交易记录表还没建立，下面为临时数据
-            $trade = [
-                '0' => [
-                    'id' => 0,
-                    'tradetime' => '2019-4-12 22:36:46',
-                    'type' => '扣钱',
-                    'money' => -100,
-                    'status' => '成功',
-                ],
-                '1' => [
-                    'id' => 1,
-                    'tradetime' => '2019-4-12 22:46:18',
-                    'type' => '充钱',
-                    'money' => 648,
-                    'status' => '成功',
-                ],
-            ];
             $trade = Trade::find()->where(['toWho'=>$user->id])->orWhere(['fromWho'=>$user->id])->orderBy(['tradeTime'=>SORT_DESC])->all();
             foreach ($trade as $value)
             {

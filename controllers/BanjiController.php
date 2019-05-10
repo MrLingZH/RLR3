@@ -30,14 +30,11 @@ class BanjiController extends Controller
 				$relationship = new RelationshipBanjiMates;
 				$relationship->banji = Banji::getIdByName($model->name);
 				$relationship->mates = Yii::$app->user->identity->id;
-				if (!$relationship->save()) 
-				{
-					return $this->render('createfailed',['status'=>1]);
-				}
+				$relationship->save();
 			}
 			else
 			{
-				return $this->render('createfailed',['status'=>2]);
+				return $this->render('createfailed',['status'=>1]);
 			}
 
 			return $this->render('createsucceed');
@@ -73,15 +70,47 @@ class BanjiController extends Controller
 		]);
 	}
 
+	public function actionBanjiincludeme()
+	{
+		$include = RelationshipBanjiMates::findAll(['mates'=>Yii::$app->user->identity->id]);
+		$mybanji = [];
+		if($include)
+		{
+			foreach($include as $value)
+			{
+				$banji = Banji::findOne(['id'=>$value->banji]);
+				array_push($mybanji, $banji);
+			}
+		}
+		if($mybanji)
+		{
+			for($i=0;$i<count($mybanji);$i++)
+			{
+				$mybanji[$i]->administrator = User::findIdentity($mybanji[$i]->administrator)->username;
+				$mybanji[$i]->school = School::findById($mybanji[$i]->school)->name;
+			}
+		}
+
+		//DataProvider数据提供者
+		$provider = new \yii\data\ArrayDataProvider([
+                        'allModels' => $mybanji,
+                        'pagination' => ['pageSize' => 10],
+                        'key' => 'id',
+                    ]);
+		return $this->render('mybanji',[
+			'provider'=>$provider,
+		]);
+	}
+
 	public function actionMybanjidetail()
 	{
 		$data = Banji::findById(Yii::$app->request->get('id'));
 		if($data)
 		{
-			if($data->administrator != Yii::$app->user->identity->id)//如果用户不是团体的管理员
+			/*if($data->administrator != Yii::$app->user->identity->id)//如果用户不是团体的管理员
 			{
 				return $this->goBack();
-			}
+			}*/
 			$data->administrator = User::findIdentity($data->administrator)->username;
 			$data->school = School::findById($data->school)->name;
 		}
@@ -99,10 +128,10 @@ class BanjiController extends Controller
 		$banji = Banji::findById(Yii::$app->request->get('id'));
 		if($banji)
 		{
-			if($banji->administrator != Yii::$app->user->identity->id)
+			/*if($banji->administrator != Yii::$app->user->identity->id)
 			{
 				return $this->goBack();
-			}
+			}*/
 			$banji->administrator = User::findIdentity($banji->administrator)->username;
 			$banji->school = School::findById($banji->school)->name;
 		}
@@ -115,12 +144,12 @@ class BanjiController extends Controller
 		//$mates->id 		自增长的id
 		//$mates->banji 	班级id
 		//$mates->mates 	成员的id
-		if($mates = RelationshipBanjiMates::findAllByBanji(Yii::$app->request->get('id')))
+		if($mates = RelationshipBanjiMates::findAll(['banji'=>$banji->id]))
 		{
 			//将查询到的关系加工成成员信息
 			foreach($mates as $key => $value)
 			{
-				$t_user = User::findIdentity($mates[$key]->mates);
+				$t_user = User::findIdentity($value->mates);
 				$mates[$key] = [];
 				$mates[$key]['username'] = $t_user->username;
 				$mates[$key]['email'] = $t_user->email;

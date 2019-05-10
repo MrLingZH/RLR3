@@ -36,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <a href=<?=Url::to(['donate/mywish'])?> class="list-group-item"><span class="badge"><?= $count['wish'] ?></span>我的心愿</a>
                     <a href=<?=Url::to(['donate/mydonation'])?> class="list-group-item"><span class="badge"><?= $count['donate'] ?></span>我的资助</a>
                     <a href=<?=Url::to(['banji/mybanji'])?> class="list-group-item"><span class="badge"><?= $count['banji'] ?></span>创建的团体</a>  
-                    <a href=<?=Url::to(['class/classesincludeme'])?> class="list-group-item"><span class="badge"><?= $count['join'] ?></span>加入的团体</a>       
+                    <a href=<?=Url::to(['banji/banjiincludeme'])?> class="list-group-item"><span class="badge"><?= $count['join'] ?></span>加入的团体</a>       
                     <a href=<?=Url::to(['site/getcurrentuserdata'])?> class="list-group-item">个人资料</a>
                     <a href=<?=Url::to(['template/list'])?> class="list-group-item">
                         模板管理
