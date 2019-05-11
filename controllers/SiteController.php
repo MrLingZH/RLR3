@@ -262,7 +262,7 @@ class SiteController extends Controller
             }
             $provider = new \yii\data\ArrayDataProvider([
                             'allModels' => $trade,
-                            'pagination' => ['pageSize' => 10],
+                            'pagination' => ['pageSize' => 5],
                             //'key' => 'id',
                         ]);
 
