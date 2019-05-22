@@ -12,6 +12,7 @@ class SimpleForm extends Model
 	public $reason;//理由
 	public $money;//金额
 	public $toWho;//对方用户名
+	public $toClass;//对方团体
 	
 	public function rules()
 	{

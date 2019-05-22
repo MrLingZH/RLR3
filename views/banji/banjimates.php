@@ -30,9 +30,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?= Html::a('充值', Url::to(['money/transfertoclass','id'=>$banji['id'],]),['class' => 'btn btn-primary  btn-sm', 'name' => 'view-button']) ?>
 &nbsp
-<?= Html::a('团体流水', Url::to(['class/tradelist','id'=>$banji['id'],]),['class' => 'btn btn-primary  btn-sm', 'name' => 'view-button']) ?>
+<?= Html::a('团体流水', Url::to(['banji/tradelist','id'=>$banji['id'],]),['class' => 'btn btn-primary  btn-sm', 'name' => 'view-button']) ?>
 &nbsp
-<?= Html::a('邀请成员', Url::to(['class/invite','id'=>$banji['id'],]),['class' => 'btn btn-primary  btn-sm', 'name' => 'register-button'])?>
+<?= Html::a('邀请成员', Url::to(['banji/invite','id'=>$banji['id'],]),['class' => 'btn btn-primary  btn-sm', 'name' => 'register-button'])?>
 &nbsp
 
 <?php

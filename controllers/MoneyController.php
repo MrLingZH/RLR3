@@ -81,6 +81,46 @@ class MoneyController extends Controller
 		return $this->render('transfer',['model'=>$model]);
 	}
 
+	public function actionTransfertoclass()
+	{
+		$model = new SimpleForm;
+		$model->toClass = Yii::$app->request->get('id');
+
+		if($model->load(Yii::$app->request->post()))
+		{
+			$fromWho = User::findOne(['id'=>Yii::$app->user->identity->id]);
+			$toClass = Banji::findOne(['id'=>$model->toClass]);
+			$trade = new Trade;
+			$trade->money = $model->money;
+			$trade->toClass = $model->toClass;
+			$trade->fromWho = $fromWho->id;
+			$trade->way = 1;//用余额转账
+			$trade->type = 1;//转账
+			$trade->status = 1;//临时
+			//$trade->transaction_id = '';
+			$trade->tradeTime = date('Y-m-d H:i:s');
+			if($trade->save())
+			{
+				$fromWho->money -= $model->money;
+				$toClass->money += $model->money;
+				if($fromWho->save())
+				{
+					if($toClass->save())
+					{
+						return $this->render('succeed');
+					}
+					$fromWho->money += $model->money;
+					$fromWho->save();
+					return $this->render('failed',['status'=>3]);
+				}
+				return $this->render('failed',['status'=>1]);
+			}
+			return $this->render('failed',['status'=>2]);
+		}
+
+		return $this->render('transfer',['model'=>$model]);
+	}
+
 	public function actionView()
 	{
 		$tradeid = Yii::$app->request->get('id');

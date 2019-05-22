@@ -9,8 +9,8 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 $url = Url::to(['site/getuserdata']);
 $str = '确认对方账户信息：';
+//获取转账对象信息进行确认
 $js = <<<JS
-// get the form id and set the event
 $('#transfer-form').on('beforeValidate', function(e) {
     var form = $(this);
     var username =$('input[name="SimpleForm[toWho]"]').val();

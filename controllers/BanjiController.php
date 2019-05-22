@@ -11,6 +11,7 @@ use app\models\User;
 use app\models\RelationshipBanjiMates;
 use app\models\Vote;
 use app\models\Wish;
+use app\models\Trade;
 
 class BanjiController extends Controller
 {
@@ -175,6 +176,23 @@ class BanjiController extends Controller
 			'beginVote'=>$beginVote,
 			'donateByUs'=>$donateByUs,
 			'donateByUsOverDue'=>$donateByUsOverDue,
+		]);
+	}
+
+	public function actionTradelist()
+	{
+		$banjiid = Yii::$app->request->get('id');
+		$trade =Trade::find()->where(['toClass'=>$banjiid])->orWhere(['toClass'=>$banjiid])->orderBy(['tradeTime'=>SORT_DESC])->all();
+
+		$provider = new \yii\data\ArrayDataProvider([
+                        'allModels' => $trade,
+                        'pagination' => ['pageSize' => 10],
+                        'key' => 'id',
+                    ]);
+
+		return $this->render('tradelist',[
+			'provider'=>$provider,
+			'banjiid'=>$banjiid,
 		]);
 	}
 
