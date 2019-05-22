@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\models\RelationshipBanjiMates;
 
 /**
  * This is the model class for table "banji".
@@ -85,5 +86,19 @@ class Banji extends \yii\db\ActiveRecord
     public static function getMybanji($id)
     {
         return static::findAll(['administrator'=>$id]);
+    }
+
+    //判断用户id是否为该班级的成员
+    public function isMate($userid)
+    {
+        $mates = RelationshipBanjiMates::findAll(['banji'=>$this->id]);
+        foreach($mates as $v)
+        {
+            if($userid == $v->mates)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -155,3 +155,25 @@ table.table.table-hover th{
 {
     color: #fa0;
 }
+
+.neederslist
+{
+    width: 65%;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    background-color: #fcfcff;
+}
+.neederslist_checked
+{
+    width: 30%;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    background-color: #fcfcff;
+    float: left;
+}
+.box_banjimates_table
+{
+    border: 1px solid #eee;
+    border-radius: 10px;
+    background-color: #fcfcff;
+}

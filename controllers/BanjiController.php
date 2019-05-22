@@ -9,6 +9,8 @@ use app\models\School;
 use app\models\Banji;
 use app\models\User;
 use app\models\RelationshipBanjiMates;
+use app\models\Vote;
+use app\models\Wish;
 
 class BanjiController extends Controller
 {
@@ -128,16 +130,12 @@ class BanjiController extends Controller
 		$banji = Banji::findById(Yii::$app->request->get('id'));
 		if($banji)
 		{
-			/*if($banji->administrator != Yii::$app->user->identity->id)
-			{
-				return $this->goBack();
-			}*/
 			$banji->administrator = User::findIdentity($banji->administrator)->username;
 			$banji->school = School::findById($banji->school)->name;
 		}
 		else
 		{
-			return $this->goBack();
+			return $this->render('error',['message'=>'非法操作。']);
 		}
 
 		//这里查询结果为
@@ -161,9 +159,22 @@ class BanjiController extends Controller
                         'key' => 'username',
                     ]);
 
+		//获取计划中的投票活动
+		$allNotCompleteVotes = Vote::findAll(['banji'=>$banji->id,'status'=>0]);
+		//获取正在进行的投票活动
+		$beginVote = Vote::findAll(['banji'=>$banji->id,'status'=>[1,4]]);
+		//获取正在帮助的心愿
+		$donateByUs = Wish::findAll(['fromClass'=>$banji->id,'status'=>[1,3]]);
+		//逾期项目
+		$donateByUsOverDue = Wish::findAll(['fromClass'=>$banji->id,'status'=>5]);
+
 		return $this->render('banjimates',[
 			'banji'=>$banji,
 			'provider'=>$provider,
+			'allNotCompleteVotes'=>$allNotCompleteVotes,
+			'beginVote'=>$beginVote,
+			'donateByUs'=>$donateByUs,
+			'donateByUsOverDue'=>$donateByUsOverDue,
 		]);
 	}
 

@@ -51,11 +51,11 @@ echo '&nbsp'.Html::a('查看协议', Url::to(['donate/viewprotocol','id'=>$wish[
 				<p><?=$data['progress']?></p>
 				<p><br><br><br>时间线说明：绿色为已划账，红色为待划账</p>
 				<?php
-				if($wish['result']=='disagreed')
+				if($wish['result'] == 2)
 				{
 					$reasonlabel = '拒绝理由';
 				}
-				if($wish['result']=='agreed')
+				if($wish['result'] == 1)
 				{
 					$reasonlabel = '同意理由';
 				}
@@ -66,9 +66,9 @@ echo '&nbsp'.Html::a('查看协议', Url::to(['donate/viewprotocol','id'=>$wish[
 				echo DetailView::widget([
 				    'model' => $wish,
 				    'attributes' => [
-				    	['label'=>isset($wish['fromWho'])?'捐款人':'捐款团体','value'=>isset($wish['fromWho'])? $wish['fromWho']:$wish['fromClass']],
-				    	['label'=>isset($wish['fromWho'])?'捐款人电话':'团体电话','value'=>isset($wish['fromWho'])?'':''],
-				    	['label'=>isset($wish['fromWho'])?'捐款人email':'团体email','value'=>isset($wish['fromWho'])?'':''],
+				    	['label'=>isset($wish['fromWho'])?'捐款人':isset($wish['fromClass'])?'捐款团体':'捐款人/团体','value'=>isset($wish['fromWho'])? $wish['fromWho']:isset($wish['fromClass'])?$wish['fromClass']:'无'],
+				    	['label'=>isset($wish['fromWho'])?'捐款人电话':isset($wish['fromClass'])?'团体电话':'捐款人/团体电话','value'=>isset($wish['fromWho'])?'':isset($wish['fromClass'])?'':'无'],
+				    	['label'=>isset($wish['fromWho'])?'捐款人Email':isset($wish['fromClass'])?'团体Email':'捐款人/团体Email','value'=>isset($wish['fromWho'])?'':isset($wish['fromClass'])?'':'无'],
 				    	['label'=>'申请人','value'=>$toWho['username']],
 				    	['label'=>'申请时间','value'=>$wish['wishtime']],
 				    	[

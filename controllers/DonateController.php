@@ -10,6 +10,7 @@ use app\models\Wish;
 use app\models\User;
 use app\models\SimpleForm;
 use app\models\Message;
+use app\models\Banji;
 
 class DonateController extends Controller
 {
@@ -99,6 +100,7 @@ class DonateController extends Controller
 	{
 		if(!$wish = Wish::findOne(['id'=>Yii::$app->request->get('id')])){return $this->redirect(['donate/mywish']);}
 		$wish->auditor = User::findOne(['id'=>$wish->auditor])->username;
+		$wish->fromClass = isset($wish->fromClass)?Banji::findOne(['id'=>$wish->fromClass])->name:null;
 
 		$toWho = User::findOne(['id'=>$wish->toWho]);
 
@@ -170,7 +172,7 @@ class DonateController extends Controller
 		$user = Yii::$app->user->identity;
 		if($result == 0)
 		{
-			$wish = Wish::find()->where(['school'=>$audit_school,'result'=>0])->orderBy(['wishtime'=>SORT_DESC])->all();
+			$wish = Wish::find()->where(['school'=>$user->audit_school,'result'=>0])->orderBy(['wishtime'=>SORT_DESC])->all();
 			$title = '心愿申请';
 		}
 		else if($result == 1)
@@ -324,6 +326,7 @@ class DonateController extends Controller
 	{
 		$wish = Wish::findOne(['id'=>Yii::$app->request->get('id')]);
 		$wish->fromWho = Yii::$app->user->identity->id;
+		$wish->fromClass = null;
 		$wish->status = 1;
 		$wish->donatetime = date("Y-m-d H:i:s");
 		$wish->save();

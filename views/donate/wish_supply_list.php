@@ -89,11 +89,7 @@ function printtablebody($model,$title,$vote)
                         <td>';
                         echo Html::a('详情', Url::to(['donate/wishdetail','id'=>$model['id']]),['class' => 'btn btn-success btn-xs']);
                         echo '&nbsp;&nbsp';
-                        if(($title=='选择投票对象') || ($title=='继续选择握手对象'))
-                        {
-                           echo Html::a('加入投票', Url::to(['vote/addinvote','donateid'=>$model['id'],'voteid'=>$vote->id]),['class' => 'btn btn-success btn-xs']);
-                        }
-                        else if($title=='资助他人')
+                        if($title=='资助他人')
                         {
                            echo Html::a('握手', Url::to(['donate/donate','id'=>$model['id']]),['class' => 'btn btn-success btn-xs']);
                         }
@@ -131,7 +127,13 @@ function printtablebody($model,$title,$vote)
                            '.$model['school'].'
                         </td>
                         <td>
-                           '.$model['applytime'].' 
+                           '.$model['wishtime'].' 
+                        </td>
+                        <td>
+                           '.$trans_result[$model['result']].'
+                        </td>
+                        <td>
+                           '.$trans_status[$model['status']].'
                         </td>
                         <td>
                             '.Html::a('修改', Url::to(['donate/editwish','id'=>$model['id']]),['class' => 'btn btn-success btn-xs']).'
@@ -166,4 +168,9 @@ printtableend();
 echo yii\widgets\LinkPager::widget([
     'pagination' => $pages,
 ]);
+
+if(isset($models) && $this->title == '资助他人')
+{
+    echo '<center><h1>暂无需要资助的人</h1></center>';
+}
 ?>
