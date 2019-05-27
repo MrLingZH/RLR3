@@ -36,7 +36,7 @@ class EdituserdataForm extends Model
         return [
             [['nickname','tel','sex'], 'required'],
             ['tel','match','pattern'=>'/^1[34578]\d{9}$/','message'=>'手机号格式不正确！'],
-            //[['upside_of_idcard','downside_of_idcard',], 'image', 'skipOnEmpty' => false, 'extensions' => 'png, jpg'], //用于上传身份证文件，可文件系统尚未编写
+            [['upside_of_idcard','downside_of_idcard',], 'image', 'skipOnEmpty' => false, 'extensions' => 'png, jpg'], //用于上传身份证文件，可文件系统尚未编写
             // ['username','validateUniqueUsername'],  //注册系统有实现此功能，这里注掉
         ];
     }
@@ -88,15 +88,16 @@ class EdituserdataForm extends Model
 
     public function update()
     {
-        if($this->validate()) {
+        if($this->validate())
+        {
             $usermodel = User::findIdentity($this->id);
             $usermodel->sex = $this->sex;
             $usermodel->nickname = $this->nickname;
             $usermodel->tel = $this->tel;
-            /*用于上传身份证正反面图片
-            $folder_path = './upload_user/idcard/'.$this->id;
-            $upside_of_idcard_filepath = $folder_path.'/upside_of_idcard'.'.'.$this->upside_of_idcard->extension;
-            $downside_of_idcard_filepath = $folder_path.'/downside_of_idcard'.'.'.$this->downside_of_idcard->extension;
+            //用于上传身份证正反面图片
+            $folder_path = './upload_user/'.$this->email.'/idcard';
+            $upside_of_idcard_filepath = $folder_path.'/upside'.'.'.$this->upside_of_idcard->extension;
+            $downside_of_idcard_filepath = $folder_path.'/downside'.'.'.$this->downside_of_idcard->extension;
             if (!file_exists($folder_path))
             {
                 mkdir($folder_path, 0777, true);
@@ -104,17 +105,17 @@ class EdituserdataForm extends Model
             $this->upside_of_idcard->saveAs($upside_of_idcard_filepath);
             $this->downside_of_idcard->saveAs($downside_of_idcard_filepath);
 
-            $usermodel->upside_of_idcard = $upside_of_idcard_filepath;
-            $usermodel->downside_of_idcard = $downside_of_idcard_filepath;
-            暂时阉割此功能
-			$usermodel->avatar_show = $this->avatar_show;//modify
-			file_put_contents('/log.txt',var_export($this->avatar_show,true));
-			*/
+            $usermodel->idcard_upside = $upside_of_idcard_filepath;
+            $usermodel->idcard_downside = $downside_of_idcard_filepath;
+            //暂时阉割此功能
+			//$usermodel->avatar_show = $this->avatar_show;//modify
+			//file_put_contents('/log.txt',var_export($this->avatar_show,true));
             $usermodel->save();
             
             return true;
         }
-        else {
+        else
+        {
             return false;
         }
     }

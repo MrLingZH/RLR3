@@ -57,12 +57,12 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row placeholders">
             <div class="col-xs-6 col-sm-3 placeholder">
               <img src=<?=Yii::$app->request->baseUrl.'/image/word.png'?> class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4><?= Html::a('承诺书模版下载', Yii::$app->request->baseUrl.'/image/承诺书模版.docx',['class' => 'btn btn-info', 'name' => 'view-button']) ?>
+              <h4><?= Html::a('承诺书模版下载', Yii::$app->request->baseUrl.'/models/承诺书模版.docx',['class' => 'btn btn-info', 'name' => 'view-button']) ?>
                 </h4>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
               <img src=<?=Yii::$app->request->baseUrl.'/image/word1.png'?> class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4><?= Html::a('心愿协议模板下载', Yii::$app->request->baseUrl.'/image/人恋人心愿协议模板.doc',['class' => 'btn btn-info', 'name' => 'view-button']) ?>
+              <h4><?= Html::a('心愿协议模板下载', Yii::$app->request->baseUrl.'/models/人恋人心愿协议模板.doc',['class' => 'btn btn-info', 'name' => 'view-button']) ?>
                 </h4>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">

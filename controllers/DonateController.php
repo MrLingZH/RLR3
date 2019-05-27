@@ -324,15 +324,24 @@ class DonateController extends Controller
 
 	public function actionDonate()
 	{
+		$user = Yii::$app->user->identity;
 		$wish = Wish::findOne(['id'=>Yii::$app->request->get('id')]);
-		$wish->fromWho = Yii::$app->user->identity->id;
-		$wish->fromClass = null;
-		$wish->status = 1;
-		$wish->donatetime = date("Y-m-d H:i:s");
-		$wish->save();
-
-		$toWho = User::findOne(['id'=>$wish->toWho])->username;
-		return $this->render('donatesucceed',['toWho'=>$toWho]);
+		$minpercent = School::findOne(['id'=>$wish])->minpercent;
+		if($user->money >= $minpercent)
+		{
+			$wish->fromWho = $user->id;
+			$wish->fromClass = null;
+			$wish->status = 1;
+			$wish->donatetime = date("Y-m-d H:i:s");
+			$wish->save();
+			$toWho = User::findOne(['id'=>$wish->toWho])->username;
+			return $this->render('donatesucceed',['toWho'=>$toWho]);
+		}
+		else
+		{
+			Yii::$app->session->setFlash('Money is not enough');
+            return $this->redirect(['wish_supply_list','result'=>1,'status'=>0]);
+		}
 	}
 
 	public function actionMydonation()

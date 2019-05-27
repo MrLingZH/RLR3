@@ -6,6 +6,7 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
+use yii\web\UploadedFile;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
@@ -20,6 +21,8 @@ use app\models\Banji;
 use app\models\RelationshipBanjiMates;
 use app\models\Message;
 use app\models\Trade;
+use app\models\UploadHeadImage;
+use app\models\UploadCertificate;
 
 class SiteController extends Controller
 {
@@ -190,7 +193,6 @@ class SiteController extends Controller
             $user->headimage = './upload_user/demo/man.png';
             $user->money = 0;
             $user->register_time = date("Y-m-d H:i:s");
-            $user->save();
 
             $school = new School;
             $school->witnessid = $user->id;
@@ -199,6 +201,11 @@ class SiteController extends Controller
             $school->registername = $model->schoolname;
             $school->registertime = date("Y-m-d H:i:s");
             $school->save();
+
+            $user->audit_school = $school->id;
+            $user->school = $school->id;
+            $user->save();
+
             return $this->render('registersucceed');
         }
         return $this->render('register',['model'=>$model]);
@@ -350,8 +357,12 @@ class SiteController extends Controller
         $editform->id = $model->id;
         //$editform->avatar_show = $model->avatar_show; //库中暂时无此字段，暂时阉割此功能
 
-        if ($editform->load(Yii::$app->request->post())){
-            if (!$editform->update()){
+        if ($editform->load(Yii::$app->request->post()))
+        {
+            $editform->upside_of_idcard = UploadedFile::getInstance($editform,'upside_of_idcard');
+            $editform->downside_of_idcard = UploadedFile::getInstance($editform,'downside_of_idcard');
+            if (!$editform->update())
+            {
                 return $this->render('singleview',['model' => $model, 'editform' => $editform]);
             }
             return $this->redirect(['getcurrentuserdata']);
@@ -381,5 +392,35 @@ class SiteController extends Controller
         }
 
         return json_encode($data);
+    }
+
+    public function actionUploadheadimage()
+    {
+        $user = Yii::$app->user->identity;
+        $model = new UploadHeadImage;
+        $model->userid = $user->id;
+        if($model->load($_POST) && $model->file = UploadedFile::getInstance($model,'file'))
+        {
+            if($model->validate() && $model->upload())
+            {
+                Yii::$app->session->setFlash('PictureUploaded');
+            }
+        }
+        return $this->render('uploadheadimage', ['model' => $model]);
+    }
+
+    public function actionUploadcertificate()
+    {
+        $user = Yii::$app->user->identity;
+        $model = new UploadCertificate;
+        $model->userid = $user->id;
+        if($model->load($_POST) && $model->file = UploadedFile::getInstance($model,'file'))
+        {
+            if($model->validate() && $model->upload())
+            {
+                Yii::$app->session->setFlash('PictureUploaded');
+            }
+        }
+        return $this->render('uploadheadimage', ['model' => $model]);
     }
 }

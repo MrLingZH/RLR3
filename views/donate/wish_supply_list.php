@@ -3,8 +3,8 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
-
 use yii\helpers\ArrayHelper;
+use app\models\School;
 
 $this->title = $title0;
 $this->params['breadcrumbs'][] = ['label'=>'应用中心','url'=>\yii\helpers\Url::to(['site/appcenter'])];
@@ -91,7 +91,7 @@ function printtablebody($model,$title,$vote)
                         echo '&nbsp;&nbsp';
                         if($title=='资助他人')
                         {
-                           echo Html::a('握手', Url::to(['donate/donate','id'=>$model['id']]),['class' => 'btn btn-success btn-xs']);
+                           echo Html::a('握手', Url::to(['donate/donate','id'=>$model['id']]),['class' => 'btn btn-success btn-xs','id'=>'donate']);
                         }
                         else if((Yii::$app->user->identity->username==$model['toWho'] || (Yii::$app->user->identity->id==$model['auditor'])) && ($model['result'] == 0))
                         {
@@ -169,8 +169,24 @@ echo yii\widgets\LinkPager::widget([
     'pagination' => $pages,
 ]);
 
-if(isset($models) && $this->title == '资助他人')
+if(count($models) == 0 && $this->title == '资助他人')
 {
     echo '<center><h1>暂无需要资助的人</h1></center>';
 }
+
+if(Yii::$app->session->hasFlash('Money is not enough'))
+{
+    $minpercent = School::findOne(['id'=>Yii::$app->user->identity->school])->minpercent;
+    $js = 'alert("您的余额未达到资助总金额的'.$minpercent.'%，所以不能进行握手。");';
+    $this->registerJs($js);
+}
+
+$js2 = <<<JS
+    $('a[id="donate"]').click(function()
+    {
+       return confirm("确定资助该心愿吗？");
+    });
+JS;
+
+$this->registerJs($js2);
 ?>

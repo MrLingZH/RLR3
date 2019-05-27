@@ -61,8 +61,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'format' => ['image',['width'=>'400','alt'=>"用户未上传"]],
         ],
         ['label'=>'性别','value'=>$SingleView['sex']],
-        ['label'=>'审核学校','value'=>$SingleView['audit_school']],
-        ['label'=>'注册学校','value'=>$SingleView['reg_school']],
+        //['label'=>'审核学校','value'=>$SingleView['audit_school']],
+        //['label'=>'注册学校','value'=>$SingleView['reg_school']],
         ['label'=>'所属学校','value'=>$SingleView['school']],
         ['label'=>'帐号类别','value'=>$translate[$SingleView['degree']]],
         ['label'=>'电子邮件','value'=>$SingleView['email']],
@@ -129,7 +129,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	<?=$form->field($editform,'avatar_show')->dropDownList($listdataTwo, ['prompt'=>'选择头像可见性'])?><!--目前阉割此功能-->
 	<?php endif; ?>
 
-    <?php if(!$model->idcard_upside && !$model->idcard_downside):?>
+    <?php if(1):?>
     <?= $form->field($editform, 'upside_of_idcard')->fileInput() ?>
     <?= $form->field($editform, 'downside_of_idcard')->fileInput() ?>
 	<?php endif; ?>
