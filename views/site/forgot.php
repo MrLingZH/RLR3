@@ -5,88 +5,44 @@ use yii\helpers\Url;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 
-$trand_title = [
-	'register'=>'会员注册',
-	'register_school'=>'见证人注册',
+$trans_title = [
+	'forgot'=>'找回密码',
+	'reset_psw'=>'重设密码',
 ];
-
-$this->title = $trand_title[Yii::$app->controller->action->id];
+$this->title = $trans_title[Yii::$app->controller->action->id];
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
 
 <div class="site-login">
 	<h1><?= Html::encode($this->title) ?></h1>
-	<p>请填写注册表单</p>
-	<?php $form = ActiveForm::begin([
+	<p>通过邮箱验证<?= $trans_title[Yii::$app->controller->action->id] ?></p>
+	<?php if(Yii::$app->session->hasFlash('Succeed')): ?>
+	修改密码成功！
+	<br/>
+	<?= Html::a('马上登录',Url::to(['site/login']),['class'=>'btn btn-success']) ?>
+	<?php else:
+	$form = ActiveForm::begin([
 		'id' => 'register-form',
 		'layout' => 'horizontal',
-        'fieldConfig' => [
-            'template' => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-8\">{error}</div>",
-            'labelOptions' => ['class' => 'col-lg-1 control-label'],
-        ],
+	    'fieldConfig' => [
+	        'template' => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-8\">{error}</div>",
+	        'labelOptions' => ['class' => 'col-lg-1 control-label'],
+    ],
 
 	]);
 	echo $form->field($model,'email');
 	echo "<spand id='but-get-verify-code'>获取验证码</spand>&nbsp&nbsp&nbsp<font id='font-get-verify-code'></font>";
 	echo "<div>&nbsp</div>";
 	echo $form->field($model,'code');
-	echo $form->field($model,'username');
 	echo $form->field($model,'password')->passwordInput();
 	echo $form->field($model,'repassword')->passwordInput();
-	echo $form->field($model,'tel');
-	if(Yii::$app->controller->action->id == 'register')
-	{
-		$listData=ArrayHelper::map($allschool,'id','name');//把查询到的数据$allschool截成'id'=>'name'
-		echo $form->field($model, 'schoolid')->dropDownList(
-	                                        $listData, 
-	                                        ['prompt'=>'选择社区']);
-		echo $form->field($model,'schoolnumber');
-		$schoolnumber = [];
-	    $schoolid = [];
-	    foreach($allschool as $value)
-	    {
-	        $schoolnumber[$value->id] = $value->schoolnumber;
-	        $schoolid[$value->schoolnumber] = $value->id;
-	    }
-	    $js1 = 'var schoolnumber = '.json_encode($schoolnumber).';
-            var schoolid = '.json_encode($schoolid).';';
-	    $js2 = <<<EOF
-	    $('#registerform-schoolid').change(function(){
-	        $('#registerform-schoolnumber').val(schoolnumber[$(this).val()]);
-	    });
-	    $('#registerform-schoolnumber').change(function(){
-	        if(!schoolid[$(this).val()])
-	        {
-	            alert('无效的社区代码');
-	            $('#registerform-schoolid').val('');
-	            $('#registerform-schoolnumber').val('');
-	        }
-	        else
-	        {
-	            $('#registerform-schoolid').val(schoolid[$(this).val()]);
-	        }
-	    });
-EOF;
-	    $js3 = "var input_email = $('#registerform-email');";
-	    $this->registerJs($js1);
-	    $this->registerJs($js2);
-	}
-	else
-	{
-		echo $form->field($model,'schoolname');
-		$js3 = "var input_email = $('#registerform_school-email');";
-	}
-	echo $form->field($model, 'acknowledgement')->checkbox([
-            'template' => '<div class=\"col-lg-offset-2 col-lg-3\">{input} 同意
-            <a href='.Url::to(['site/about']).' target="blank">《人恋人社区须知》</a>
-            </div><div class=\"col-lg-8\">{error}</div>',
-        ]);
 	echo Html::submitButton('完成',['class'=>'btn btn-success']);
 	ActiveForm::end();
 
 
-    $js4 = <<<EOF
+    $js = <<<EOF
+    var input_email = $('#forgotform-email');
     var t;//计时器
     var s = 0;//秒数
     var isSend = false;
@@ -114,7 +70,7 @@ EOF;
 				isSend = true;
 				$.ajax({
 					'type':'POST',
-					'url':'index.php?r=site/get_verify_code&type=register',
+					'url':'index.php?r=site/get_verify_code&type=forgot',
 					'data':{
 						'email':input_email.val(),
 					},
@@ -135,7 +91,7 @@ EOF;
 								t = setTimeout(timer,1000);
 								break;
 							case 1:
-								$('#font-get-verify-code').text('邮箱已被注册');
+								$('#font-get-verify-code').text('该邮箱用户不存在。');
 								$('#font-get-verify-code').css({color: '#f00'});
 								$('#but-get-verify-code').text('获取验证码');
 								$('#but-get-verify-code').css({
@@ -198,13 +154,8 @@ EOF;
     }
 
 EOF;
-
-    $this->registerJs($js3);
-    $this->registerJs($js4);
+	$this->registerJs($js);
+	endif;
 	?>
 
 </div>
-
-<script type="text/javascript">
-
-</script>

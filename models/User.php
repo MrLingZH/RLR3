@@ -146,6 +146,19 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         
         return $mail->send();
     }
+    public function sendVerifyCode_Forgot()
+    {
+        $to = $this->email;
+        $subject = "《人恋人公益平台》密码找回验证码";
+        $body = "亲爱的".$this->email."您好，这是您的密码找回验证码：".$this->verifyCode."。如果这不是您本人的操作，请注意您的账号安全,切勿将验证码泄露！";
+
+        $mail = Yii::$app->mailer->compose();
+        $mail->setTo($to);
+        $mail->setSubject($subject);
+        $mail->setHtmlBody($body);
+        
+        return $mail->send();
+    }
 
     public function getSingleView()
     {
@@ -169,5 +182,11 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             'isVeified'=>$this->trans_verify[$this->isVerfied],
             );
         return $SingleViewResult;
+    }
+
+    public function updatePassword($psw)
+    {
+        $this->password = password_hash($psw, PASSWORD_DEFAULT);
+        $this->save();
     }
 }

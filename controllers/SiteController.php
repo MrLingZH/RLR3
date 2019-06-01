@@ -23,6 +23,7 @@ use app\models\Message;
 use app\models\Trade;
 use app\models\UploadHeadImage;
 use app\models\UploadCertificate;
+use app\models\ForgotForm;
 
 class SiteController extends Controller
 {
@@ -167,6 +168,7 @@ class SiteController extends Controller
             $user->headimage = './upload_user/demo/man.png';
             $user->money = 0;
             $user->register_time = date("Y-m-d H:i:s");
+            $user->verifyCode = null;
             $user->save();
             return $this->render('registersucceed');
         }
@@ -193,6 +195,7 @@ class SiteController extends Controller
             $user->headimage = './upload_user/demo/man.png';
             $user->money = 0;
             $user->register_time = date("Y-m-d H:i:s");
+            $user->verifyCode = null;
 
             $school = new School;
             $school->witnessid = $user->id;
@@ -213,35 +216,55 @@ class SiteController extends Controller
 
     public function actionGet_verify_code()
     {
+        $type = $_GET['type'];
         $email = $_POST['email'];
         $user = User::findOne(['email'=>$email]);
-        if($user)
+        switch($type)
         {
-            if($user->isVerfied == 1)
-            {
-                $status = 1;//邮箱已被注册
-            }
-            else
-            {
-                $user->updateVerifyCode();
-                if($user->sendVerifyCode()){$status = 0;}
-                else{$status = 2;}
-            }
+            case 'register':
+                if($user)
+                {
+                    if($user->isVerfied == 1)
+                    {
+                        $status = 1;//邮箱已被注册
+                    }
+                    else
+                    {
+                        $user->updateVerifyCode();
+                        if($user->sendVerifyCode()){$status = 0;}
+                        else{$status = 2;}
+                    }
+                }
+                else
+                {
+                    $user = new User;
+                    $user->email = $email;
+                    $user->updateVerifyCode();
+                    if($user->sendVerifyCode()){$status = 0;}
+                    else{$status = 2;}
+                }
+                break;
+            case 'forgot':
+                if($user)
+                {
+                    $user->updateVerifyCode();
+                    if($user->sendVerifyCode_Forgot()){$status = 0;}
+                    else{$status = 2;}
+                }
+                else
+                {
+                    $status = 1;//邮箱不存在
+                }
+                break;
+            default:
+                $data = null;
+                break;
         }
-        else
-        {
-            $user = new User;
-            $user->email = $email;
-            $user->updateVerifyCode();
-            if($user->sendVerifyCode()){$status = 0;}
-            else{$status = 2;}
-        }
-
         $data = [
             'status'=>$status,
         ];
-
         return json_encode($data);
+        
     }
 
     public function actionAppcenter()
@@ -422,5 +445,18 @@ class SiteController extends Controller
             }
         }
         return $this->render('uploadheadimage', ['model' => $model]);
+    }
+
+    public function actionForgot()
+    {
+        $forgotForm = new ForgotForm;
+        if($forgotForm->load(Yii::$app->request->post()) && $forgotForm->validate())
+        {
+            $user = User::findOne(['email'=>$forgotForm->email]);
+            $user->verifyCode = null;
+            $user->updatePassword($forgotForm->password);
+            Yii::$app->session->setFlash('Succeed');
+        }
+        return $this->render('forgot',['model'=>$forgotForm]);
     }
 }

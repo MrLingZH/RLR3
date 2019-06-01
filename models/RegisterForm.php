@@ -86,7 +86,7 @@ class RegisterForm extends Model
     {
         $user = User::findByEmail($this->email);
         if (!$this->hasErrors()) {
-            if($user->verifyCode != $this->code){
+            if($this->code == null || $user->verifyCode != $this->code){
                 $this->addError($attribute,'验证码不正确！');
             }
         }
