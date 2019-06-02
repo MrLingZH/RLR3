@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use Yii;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use app\models\BanjiForm;
 use app\models\School;
@@ -15,6 +16,41 @@ use app\models\Trade;
 
 class BanjiController extends Controller
 {
+	public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => [
+                    'create',
+                    'mybanji',
+                    'banjiincludeme',
+                    'mybanjidetail',
+                    'banjimates',
+                    'tradelist',
+                ],
+                'rules' => [
+                    [
+                        'actions' => ['create','mybanji','banjiincludeme','mybanjidetail'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['banjimates','tradelist'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function($rule,$action)
+                        {
+                            $user = Yii::$app->user->identity;
+                            if(!$banji = Banji::findOne(['id'=>Yii::$app->request->get('id')]))return false;
+                            return $banji->isMate($user->id);
+                        }
+                    ],
+                ],
+            ],
+        ];
+    }
+
 	public function actionCreate()
 	{
 		$model = new BanjiForm;
@@ -107,13 +143,9 @@ class BanjiController extends Controller
 
 	public function actionMybanjidetail()
 	{
-		$data = Banji::findById(Yii::$app->request->get('id'));
+		$data = Banji::findOne(['id'=>Yii::$app->request->get('id')]);
 		if($data)
 		{
-			/*if($data->administrator != Yii::$app->user->identity->id)//如果用户不是团体的管理员
-			{
-				return $this->goBack();
-			}*/
 			$data->administrator = User::findIdentity($data->administrator)->username;
 			$data->school = School::findById($data->school)->name;
 		}
@@ -129,15 +161,8 @@ class BanjiController extends Controller
 	public function actionBanjimates()
 	{
 		$banji = Banji::findById(Yii::$app->request->get('id'));
-		if($banji)
-		{
-			$banji->administrator = User::findIdentity($banji->administrator)->username;
-			$banji->school = School::findById($banji->school)->name;
-		}
-		else
-		{
-			return $this->render('error',['message'=>'非法操作。']);
-		}
+		$banji->administrator = User::findIdentity($banji->administrator)->username;
+		$banji->school = School::findById($banji->school)->name;
 
 		//这里查询结果为
 		//$mates->id 		自增长的id

@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = ['label'=>$title_back,'url'=>$url_back];*/
 $this->params['breadcrumbs'][] = ['label'=>'我创建的团体','url'=>Url::to(['banji/mybanji'])];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<h1>成员列表</h1>
+<h1><?=$banji['name']?></h1>
 <h3>
     团体余额：<?=$banji['money']?>元
 </h3>
