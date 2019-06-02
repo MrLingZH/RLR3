@@ -474,4 +474,17 @@ class SiteController extends Controller
         }
         return $this->render('forgot',['model'=>$forgotForm]);
     }
+
+    public function actionReset_psw()
+    {
+        $forgotForm = new ForgotForm;
+        if($forgotForm->load(Yii::$app->request->post()) && $forgotForm->validate())
+        {
+            $user = User::findOne(['email'=>$forgotForm->email]);
+            $user->verifyCode = null;
+            $user->updatePassword($forgotForm->password);
+            Yii::$app->session->setFlash('Succeed');
+        }
+        return $this->render('forgot',['model'=>$forgotForm]);
+    }
 }

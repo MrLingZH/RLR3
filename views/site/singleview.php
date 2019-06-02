@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <img class="img-responsive" src=<?=$model->headimage?> width="150px" alt="用户未上传头像"><br>
          <?= Html::a('上传头像', Url::to(['site/uploadheadimage']),['class' => 'btn btn-info btn-sm', 'name' => 'view-button']) ?>&nbsp
          <?=  Html::a('完善个人资料', ['site/edituserdata'], ['class' => 'btn btn-success btn-sm']); ?>&nbsp
-         <?=  Html::a('修改密码', ['site/updatepassword'], ['class' => 'btn btn-primary btn-sm']); ?>
+         <?=  Html::a('修改密码', ['site/reset_psw'], ['class' => 'btn btn-primary btn-sm']); ?>
         </div>
     </div>
 </div>
