@@ -195,4 +195,10 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         if($this->degree == 'witness')return true;
         return false;
     }
+
+    public function isAdmin()
+    {
+        if($this->degree == 'admin')return true;
+        return false;
+    }
 }

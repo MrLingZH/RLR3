@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use Yii;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use app\models\School;
 use app\models\User;
@@ -11,6 +12,31 @@ use app\models\Message;
 
 class AdminController extends Controller
 {
+	public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => [
+                    'agreed_apply_school',
+                    'disagreed_apply_school',
+                ],
+                'rules' => [
+                    [
+                        'actions' => ['agreed_apply_school','disagreed_apply_school'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function($rule,$action)
+                        {
+                            $user = Yii::$app->user->identity;
+                            return $user->isAdmin();
+                        }
+                    ],
+                ],
+            ],
+        ];
+    }
+
 	public function actionAgreed_apply_school()
 	{
 		$school = School::findOne(Yii::$app->request->get('id'));
