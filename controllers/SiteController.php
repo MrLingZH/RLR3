@@ -39,19 +39,35 @@ class SiteController extends Controller
                     'logout',
                     'appcenter',
                     'register',
-                    'register2',
                     'register_school',
+                    //'get_verify_code',
+                    'getcurrentuserdata',
+                    'uploadheadimage',
+                    'uploadcertificate',
+                    'edituserdata',
+                    'getuserdata',
+                    'forgot',
                 ],
                 'rules' => [
                     [
-                        'actions' => ['logout','appcenter'],
+                        'actions' => ['logout','appcenter','getcurrentuserdata','uploadheadimage','edituserdata','getuserdata'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
                     [
-                        'actions' => ['register','register2','register_school'],
+                        'actions' => ['register','register_school','forgot'],
                         'allow' => true,
                         'roles' => ['?'],
+                    ],
+                    [
+                        'actions' => ['uploadcertificate'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function($rule,$action)
+                        {
+                            $user = Yii::$app->user->identity;
+                            return $user->isWitness();
+                        }
                     ],
                 ],
             ],
@@ -216,8 +232,7 @@ class SiteController extends Controller
 
     public function actionGet_verify_code()
     {
-        $type = $_GET['type'];
-        $email = $_POST['email'];
+        if(!($type = Yii::$app->request->get('type') && $email = Yii::$app->request->post('email')))return $this->redirect(['index']);
         $user = User::findOne(['email'=>$email]);
         switch($type)
         {
@@ -257,7 +272,7 @@ class SiteController extends Controller
                 }
                 break;
             default:
-                $data = null;
+                $status = null;
                 break;
         }
         $data = [

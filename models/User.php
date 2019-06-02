@@ -189,4 +189,10 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         $this->password = password_hash($psw, PASSWORD_DEFAULT);
         $this->save();
     }
+
+    public function isWitness()
+    {
+        if($this->degree == 'witness')return true;
+        return false;
+    }
 }
