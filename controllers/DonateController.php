@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use Yii;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use app\models\WishForm;
 use app\models\School;
@@ -14,6 +15,55 @@ use app\models\Banji;
 
 class DonateController extends Controller
 {
+	public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => [
+                    'wish',
+                    'rewish',
+                    'mywish',
+                    'editwish',
+                    'wish_supply_list',
+                    'wish_agreed',
+                    'wish_disagreed',
+                    'wish_delete',
+                    'donate',
+                    'mydonation',
+                    'update_wish_status',
+                ],
+                'rules' => [
+                    [
+                        'actions' => ['wish_supply_list','editwish'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['wish','mywish','rewish','mydonation','donate'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function($rule,$action)
+                        {
+                            $user = Yii::$app->user->identity;
+                            return $user->isVip();
+                        }
+                    ],
+                    [
+                        'actions' => ['wish_agreed','wish_disagreed','wish_delete','update_wish_status'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function($rule,$action)
+                        {
+                            $user = Yii::$app->user->identity;
+                            return $user->isWitness();
+                        }
+                    ],
+                ],
+            ],
+        ];
+    }
+
 	public function actionWish()
 	{
 		$model = new WishForm;
@@ -169,6 +219,7 @@ class DonateController extends Controller
 	{
 		$result = Yii::$app->request->get('result');
 		$status = Yii::$app->request->get('status');
+		if(!($result >= 0 && $result <= 3 && $status >= 0 && $status <= 5))return $this->redirect(['site/appcenter']);
 		$user = Yii::$app->user->identity;
 		if($result == 0)
 		{

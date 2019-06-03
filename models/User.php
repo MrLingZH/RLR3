@@ -201,4 +201,10 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         if($this->degree == 'admin')return true;
         return false;
     }
+
+    public function isVip()
+    {
+        if($this->degree == 'vip')return true;
+        return false;
+    }
 }
