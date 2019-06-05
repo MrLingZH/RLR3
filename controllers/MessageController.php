@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use yii\web\Controller;
+use yii\filters\AccessControl;
 use app\models\User;
 use app\models\Message;
 use app\models\MessageForm;
@@ -11,6 +12,29 @@ use app\models\RelationshipContacts;
 
 class MessageController extends Controller
 {
+	public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => [
+                    'index',
+                    'message',
+                    'set_readed',
+                    'set_unreaded',
+                    'write',
+                ],
+                'rules' => [
+                    [
+                        'actions' => ['index','message','set_readed','set_unreaded','write'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }
+    
 	public function actions()
 	{
 	    return [
@@ -52,7 +76,8 @@ class MessageController extends Controller
 
 	public function actionSet_readed()
 	{
-		$message = Message::findOne(['id'=>Yii::$app->request->get('id')]);
+		if(!$message = Message::findOne(['id'=>Yii::$app->request->get('id')]))return $this->redirect(['site/appcenter']);
+		if($message->toWho != Yii::$app->user->identity->id)return $this->redirect(['site/appcenter']);
 		$message->status = 1;
 		$message->save();
 		return $this->actionIndex();
@@ -60,7 +85,8 @@ class MessageController extends Controller
 
 	public function actionSet_unreaded()
 	{
-		$message = Message::findOne(['id'=>Yii::$app->request->get('id')]);
+		if(!$message = Message::findOne(['id'=>Yii::$app->request->get('id')]))return $this->redirect(['site/appcenter']);
+		if($message->toWho != Yii::$app->user->identity->id)return $this->redirect(['site/appcenter']);
 		$message->status = 0;
 		$message->save();
 		return $this->actionIndex();

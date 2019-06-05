@@ -129,4 +129,11 @@ EOF;
 
     return $rlt;
     }
+
+    //判断用户能否资助该心愿，因为只能资助在本社区的心愿
+    public function canDonate($schoolWithUser)
+    {
+        if($schoolWithUser == $this->school)return true;
+        return false;
+    }
 }

@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use yii\web\Controller;
+use yii\filters\AccessControl;
 use app\models\User;
 use app\models\Banji;
 use app\models\Vote;
@@ -14,16 +15,40 @@ use yii\data\ArrayDataProvider;
 
 class VoteController extends Controller
 {
+	public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => [
+                    'launchvote',
+                    'editneeders',
+                    'addinvote',
+                    'checked_cancel',
+                    'delete',
+                    'beginvote',
+                    'view',
+                    'vote',
+                    'endvote',
+                ],
+                'rules' => [
+                    [
+                        'actions' => ['launchvote','editneeders','addinvote','checked_cancel','delete','beginvote','view','vote','endvote'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
 	public function actionLaunchvote()
 	{
-		$banji = Banji::findOne(['id'=>Yii::$app->request->get('id')]);
+		if(!$banji = Banji::findOne(['id'=>Yii::$app->request->get('id')]))return $this->redirect(['site/appcenter']);
 		$user = Yii::$app->user->identity;
-		if($user->id != $banji->administrator)
-		{
-			return $this->render('error',['message'=>'非法操作。']);
-		}
-		$vote = new Vote;
+		if(!$banji->isAdministrator($user->id))return $this->redirect(['site/appcenter']);
 
+		$vote = new Vote;
 		if($vote->load(Yii::$app->request->post()) && $vote->beforeSubmit())
 		{
 			$vote->banji = $banji->id;
@@ -40,10 +65,10 @@ class VoteController extends Controller
 
 	public function actionEditneeders()
 	{
-		if(!$vote = Vote::findOne(['id'=>Yii::$app->request->get('id')])){return $this->render('error',['message'=>'非法操作。']);}
+		if(!$vote = Vote::findOne(['id'=>Yii::$app->request->get('id')]))return $this->redirect(['site/appcenter']);
 		$banji = banji::findOne(['id'=>$vote->banji]);
 		$user = Yii::$app->user->identity;
-		if($user->id != $banji->administrator){return $this->render('error',['message'=>'非法操作。']);}
+		if(!$banji->isAdministrator($user->id))return $this->redirect(['site/appcenter']);
 		
 		//获取该团体的成员
 		$t_menbers = RelationshipBanjiMates::findAll(['banji'=>$banji->id]);
@@ -98,12 +123,13 @@ class VoteController extends Controller
 		$wishid = Yii::$app->request->get('wishid');
 		$voteid = Yii::$app->request->get('voteid');
 
-		if(!$wish = Wish::findOne(['id'=>$wishid])){return $this->render('error',['message'=>'非法操作。']);}
-		if(!$vote = Vote::findOne(['id'=>$voteid])){return $this->render('error',['message'=>'非法操作。']);}
+		if(!$wish = Wish::findOne(['id'=>$wishid]))return $this->redirect(['site/appcenter']);
+		if(!$vote = Vote::findOne(['id'=>$voteid]))return $this->redirect(['site/appcenter']);
 		$banji = banji::findOne(['id'=>$vote->banji]);
 		$user = Yii::$app->user->identity;
-		if($user->id != $banji->administrator){return $this->render('error',['message'=>'非法操作。']);}
-		if($wish->status != 0){return $this->render('error',['message'=>'该心愿的状态在执行此操作之前发生了变化。']);}
+		if(!$banji->isAdministrator($user->id))return $this->redirect(['site/appcenter']);
+		if(!$wish->canDonate($user->school))return $this->redirect(['site/appcenter']);
+		if($wish->status != 0)return $this->render('error',['message'=>'该心愿的状态在执行此操作之前发生了变化。']);
 		
 		if($vote->needers == null)
 		{
@@ -128,16 +154,18 @@ class VoteController extends Controller
 		return $this->redirect(['vote/editneeders','id'=>$vote->id]);
 	}
 
-	public function actionChecked_cancel()
+	public function actionChecked_cancel()//取消选择
 	{
 		$voteid = Yii::$app->request->get('voteid');
 		$wishid = Yii::$app->request->get('wishid');
-		if(!$vote = Vote::findOne(['id'=>$voteid])){return $this->render('error',['message'=>'非法操作。']);}
+
+		if(!$vote = Vote::findOne(['id'=>$voteid]))return $this->redirect(['site/appcenter']);
+		if(!$wish = Wish::findOne(['id'=>$wishid]))return $this->redirect(['site/appcenter']);
 		$banji = banji::findOne(['id'=>$vote->banji]);
 		$user = Yii::$app->user->identity;
-		if($user->id != $banji->administrator){return $this->render('error',['message'=>'非法操作。']);}
+		if(!$banji->isAdministrator($user->id))return $this->redirect(['site/appcenter']);
+		if(!$wish->canDonate($user->school))return $this->redirect(['site/appcenter']);
 
-		$wish = Wish::findOne(['id'=>$wishid]);
 		$wish->status = 0;
 		$wish->fromClass = null;
 		$wish->save();
@@ -166,10 +194,11 @@ class VoteController extends Controller
 	public function actionDelete()
 	{
 		$voteid = Yii::$app->request->get('id');
-		if(!$vote = Vote::findOne(['id'=>$voteid])){return $this->render('error',['message'=>'非法操作。']);}
+
+		if(!$vote = Vote::findOne(['id'=>$voteid]))return $this->redirect(['site/appcenter']);
 		$banji = banji::findOne(['id'=>$vote->banji]);
 		$user = Yii::$app->user->identity;
-		if($user->id != $banji->administrator){return $this->render('error',['message'=>'非法操作。']);}
+		if(!$banji->isAdministrator($user->id))return $this->redirect(['site/appcenter']);
 
 		if($vote->needers != null)
 		{
@@ -192,11 +221,11 @@ class VoteController extends Controller
 	{
 		$voteid = Yii::$app->request->get('id');
 
-		if(!$vote = Vote::findOne(['id'=>$voteid])){return $this->render('error',['message'=>'非法操作。']);}
+		if(!$vote = Vote::findOne(['id'=>$voteid]))return $this->redirect(['site/appcenter']);
 		$banji = banji::findOne(['id'=>$vote->banji]);
 		$user = Yii::$app->user->identity;
-		if($user->id != $banji->administrator){return $this->render('error',['message'=>'非法操作。']);}
-		if(date('Y-m-d H:i:s') > $vote->endTime){return $this->render('error',['message'=>'投票时间已结束。']);}
+		if(!$banji->isAdministrator($user->id))return $this->redirect(['site/appcenter']);
+		if(date('Y-m-d H:i:s') > $vote->endTime)return $this->render('error',['message'=>'投票时间已结束。']);
 
 		$needers = explode(',',$vote->needers);
 		$count_needers = count($needers);
@@ -234,12 +263,12 @@ class VoteController extends Controller
 	public function actionView()
 	{
 		$voteid = Yii::$app->request->get('id');
-		if(!$vote = Vote::findOne(['id'=>$voteid])){return $this->render('error',['message'=>'非法操作。']);}
+		if(!$vote = Vote::findOne(['id'=>$voteid]))return $this->redirect(['site/appcenter']);
 
 		//判断访问用户是否为该班级的成员
 		$user = Yii::$app->user->identity;
 		$banji = Banji::findOne(['id'=>$vote->banji]);
-		if(!$banji->isMate($user->id)){return $this->render('error',['message'=>'非法操作。']);}
+		if(!$banji->isMate($user->id))return $this->redirect(['site/appcenter']);
 		if($vote->status != 1){return $this->render('error',['message'=>'投票已结束。']);}
 
 		$vote->init();
@@ -263,14 +292,14 @@ class VoteController extends Controller
 		$voteid = Yii::$app->request->get('voteid');
 		$wishid = Yii::$app->request->get('wishid');
 
-		if(!$vote = Vote::findOne(['id'=>$voteid])){return $this->render('error',['message'=>'非法操作。']);}
+		if(!$vote = Vote::findOne(['id'=>$voteid]))return $this->redirect(['site/appcenter']);
 		$vote->init();
-		if(!$wish = Wish::findOne(['id'=>$wishid])){return $this->render('error',['message'=>'非法操作。']);}
+		if(!$wish = Wish::findOne(['id'=>$wishid]))return $this->redirect(['site/appcenter']);
 		if(date('Y-m-d H:i:s') > $vote->endTime){return $this->render('error',['message'=>'投票时间已截止。']);}
 		if($vote->status != 1){return $this->render('error',['message'=>'投票已结束。']);}
 		$user = Yii::$app->user->identity;
 		$banji = Banji::findOne(['id'=>$vote->banji]);
-		if(!$banji->isMate($user->id)){return $this->render('error',['message'=>'非法操作。']);}
+		if(!$banji->isMate($user->id))return $this->redirect(['site/appcenter']);
 		if($vote->isVoteInWish($user->id,$wishid)){return $this->render('error',['message'=>'请勿重复投票。']);}
 		if($vote->getVotesFromUser($user->id)>=$vote->Nmax){return $this->render('error',['message'=>'已投完所有票。']);}
 
@@ -304,10 +333,10 @@ class VoteController extends Controller
 	public function actionEndvote()
 	{
 		$voteid = Yii::$app->request->get('id');
-		if(!$vote = Vote::findOne(['id'=>$voteid])){return $this->render('error',['message'=>'非法操作。']);}
+		if(!$vote = Vote::findOne(['id'=>$voteid]))return $this->redirect(['site/appcenter']);
 		$banji = banji::findOne(['id'=>$vote->banji]);
 		$user = Yii::$app->user->identity;
-		if($user->id != $banji->administrator && $vote->status == 1){return $this->render('error',['message'=>'非法操作。']);}
+		if(!$banji->isAdministrator($user->id) && $vote->status == 1)return $this->redirect(['site/appcenter']);
 
 		$vote->init();
 		//计算投票结果排名

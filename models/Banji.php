@@ -101,4 +101,10 @@ class Banji extends \yii\db\ActiveRecord
         }
         return false;
     }
+
+    public function isAdministrator($userid)
+    {
+        if($this->administrator == $userid)return true;
+        return false;
+    }
 }

@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use yii\web\Controller;
+use yii\filters\AccessControl;
 use app\models\User;
 use app\models\Banji;
 use app\models\Message;
@@ -12,6 +13,38 @@ use app\models\SimpleForm;
 
 class MoneyController extends Controller
 {
+	public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => [
+                    'recharge',
+                    'transfertoperson',
+                    'transfertoclass',
+                    'view',
+                ],
+                'rules' => [
+                    [
+                        'actions' => ['view'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['transfertoperson','transfertoclass','recharge'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function($rule,$action)
+                        {
+                            $user = Yii::$app->user->identity;
+                            return $user->isVip();
+                        }
+                    ],
+                ],
+            ],
+        ];
+    }
+
 	public function actionRecharge()
 	{
 		$model = new SimpleForm;
@@ -84,7 +117,7 @@ class MoneyController extends Controller
 	public function actionTransfertoclass()
 	{
 		$model = new SimpleForm;
-		$model->toClass = Yii::$app->request->get('id');
+		if(!$model->toClass = Yii::$app->request->get('id'))return $this->redirect(['site/appcenter']);
 
 		if($model->load(Yii::$app->request->post()))
 		{
@@ -123,7 +156,7 @@ class MoneyController extends Controller
 
 	public function actionView()
 	{
-		$tradeid = Yii::$app->request->get('id');
+		if(!$tradeid = Yii::$app->request->get('id'))return $this->redirect(['site/appcenter']);
 		$user = Yii::$app->user->identity;
 		$tradeinfo = Trade::findOne(['id'=>$tradeid]);
 		if($tradeinfo == null)

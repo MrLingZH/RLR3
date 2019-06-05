@@ -418,7 +418,9 @@ class DonateController extends Controller
 	public function actionUpdate_wish_status()
 	{
 		$status = Yii::$app->request->get('status');
-		$wish = Wish::findOne(['id'=>Yii::$app->request->get('id')]);
+		$wishid = Yii::$app->request->get('id');
+		if($status == null || $wishid == null)return $this->redirect(['site/appcenter']);
+		if(!$wish = Wish::findOne(['id'=>$wishid])return $this->redirect(['site/appcenter']));
 		switch($status)
 		{
 			case '0':
