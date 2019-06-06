@@ -51,19 +51,19 @@ class School extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'address' => 'Address',
-            'minpercent' => 'Minpercent',
-            'pictures' => 'Pictures',
-            'registerresult' => 'Registerresult',
-            'subDomain' => 'Sub Domain',
-            'type' => 'Type',
-            'witnessid' => 'Witnessid',
-            'registertime' => 'Registertime', 
-            'registername' => 'Registername',
-            'schoolnumber' => 'Schoolnumber',
-            'foundtime' => 'Foundtime',
-            'disagreedreason' => 'Disagreedreason',
+            'name' => '名称',
+            'address' => '地址',
+            'minpercent' => '资金百分比',
+            'pictures' => '照片',
+            'registerresult' => '注册结果',
+            'subDomain' => '二级域名',
+            'type' => '类型',
+            'witnessid' => '见证人',
+            'registertime' => '注册时间', 
+            'registername' => '注册名称',
+            'schoolnumber' => '代码',
+            'foundtime' => '创立时间',
+            'disagreedreason' => '审核不通过理由',
         ];
     }
 

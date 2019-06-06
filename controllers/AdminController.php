@@ -52,6 +52,14 @@ class AdminController extends Controller
 		{
 			if($user->save())
 			{
+				$message = new Message;
+				$message->fromWho = Yii::$app->user->identity->id;
+				$message->toWho = $school->witnessid;
+				$message->title = "学校注册申请结果";
+				$message->content = "您于".$school->registertime."申请的“学校注册”已通过审核！";
+				$message->status = 0;
+				$message->sendTime = date("Y-m-d H:i:s");
+				$message->send();
 				return $this->render('succeed');
 			}
 			$school->name = null;

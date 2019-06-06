@@ -420,7 +420,7 @@ class DonateController extends Controller
 		$status = Yii::$app->request->get('status');
 		$wishid = Yii::$app->request->get('id');
 		if($status == null || $wishid == null)return $this->redirect(['site/appcenter']);
-		if(!$wish = Wish::findOne(['id'=>$wishid])return $this->redirect(['site/appcenter']));
+		if(!$wish = Wish::findOne(['id'=>$wishid]))return $this->redirect(['site/appcenter']);
 		switch($status)
 		{
 			case '0':

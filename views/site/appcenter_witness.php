@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <a href=<?=Url::to(['donate/wish_supply_list','status'=>4,'result'=>1])?> class="list-group-item">
                         <span class="badge"><?=$count['status4']?></span>资助完成</a>    
                     
-                    <a href=<?=Url::to(['event/indexbyme'])?> class="list-group-item">我的见证人申请</a>
+                    <!-- <a href=<?=Url::to(['event/indexbyme'])?> class="list-group-item">我的见证人申请</a> -->
                     <a href=<?=Url::to(['site/getcurrentuserdata'])?> class="list-group-item">个人资料</a>
                     <a href=<?=Url::to(['template/list'])?> class="list-group-item">
                         模板管理
