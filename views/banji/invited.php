@@ -75,7 +75,7 @@ function printtableend()
 }
     $models = $provider->getModels();
     $pages = $provider->getPagination();
-    echo '<h3>最近交易记录</h3>';
+    echo '<h3>已发出的邀请</h3>';
     printtalehead('时间','用户名','邮箱','状态');
     foreach ($models as $model) 
     {
