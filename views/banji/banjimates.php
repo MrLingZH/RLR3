@@ -32,15 +32,16 @@ $this->params['breadcrumbs'][] = $this->title;
 &nbsp
 <?= Html::a('团体流水', Url::to(['banji/tradelist','id'=>$banji['id'],]),['class' => 'btn btn-primary  btn-sm', 'name' => 'view-button']) ?>
 &nbsp
-<?= Html::a('邀请成员', Url::to(['banji/invite','id'=>$banji['id'],]),['class' => 'btn btn-primary  btn-sm', 'name' => 'register-button'])?>
-&nbsp
 
 <?php
 if($banji['administrator']==Yii::$app->user->identity->username)
 {
-
+    echo Html::a('邀请成员', Url::to(['banji/invite','id'=>$banji['id'],]),['class' => 'btn btn-primary  btn-sm', 'name' => 'register-button']);
+    echo '&nbsp';
+    echo Html::a('已邀请', Url::to(['banji/invited','id'=>$banji['id'],]),['class' => 'btn btn-primary  btn-sm', 'name' => 'register-button']);
+    echo '&nbsp';
     echo Html::a('发起团体投票', Url::to(['vote/launchvote','id'=>$banji['id'],]),['class' => 'btn btn-primary btn-sm', 'name' => 'register-button']);
-    
+
     echo '<h3>正在计划的投票活动</h3>';
     if($allNotCompleteVotes == null)
     {

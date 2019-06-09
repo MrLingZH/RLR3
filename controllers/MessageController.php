@@ -9,6 +9,8 @@ use app\models\User;
 use app\models\Message;
 use app\models\MessageForm;
 use app\models\RelationshipContacts;
+use app\models\RelationshipBanjiMates;
+use app\models\Invite;
 
 class MessageController extends Controller
 {
@@ -23,10 +25,11 @@ class MessageController extends Controller
                     'set_readed',
                     'set_unreaded',
                     'write',
+                    'request',
                 ],
                 'rules' => [
                     [
-                        'actions' => ['index','message','set_readed','set_unreaded','write'],
+                        'actions' => ['index','message','set_readed','set_unreaded','write','request'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -130,6 +133,44 @@ class MessageController extends Controller
 			'model'=>$model,
 			'contacts'=>$contacts,
 		]);
+	}
+
+	public function actionRequest()
+	{
+		if(!$invite = Invite::findOne(['id'=>Yii::$app->request->get('inviteid')]))return $this->redirect(['site/appcenter']);
+		if($invite->toWho != Yii::$app->user->identity->id)return $this->redirect(['site/appcenter']);
+		$type = Yii::$app->request->get('type');
+		$deal = Yii::$app->request->get('deal');
+		switch($type)
+		{
+			case 'banjiinvite':
+				switch($deal)
+				{
+					case 'accept':
+						$invite->result = 1;
+						$invite->dealTime = date('Y-m-d H:i:s');
+						$invite->save();
+
+						$relationship = new RelationshipBanjiMates;
+						$relationship->banji = $invite->fromClass;
+						$relationship->mates = $invite->toWho;
+						$relationship->save();
+						break;
+					case 'refuse':
+						$invite->result = -1;
+						$invite->dealTime = date('Y-m-d H:i:s');
+						$invite->save();
+						break;
+					default:
+						return $this->redirect(['site/appcenter']);
+						break;
+				}
+				break;
+			default:
+				return $this->redirect(['site/appcenter']);
+				break;
+		}
+		return $this->redirect(['message/message','id'=>Yii::$app->request->get('messageid')]);
 	}
 }
 

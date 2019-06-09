@@ -378,7 +378,7 @@ class DonateController extends Controller
 		$user = Yii::$app->user->identity;
 		$wish = Wish::findOne(['id'=>Yii::$app->request->get('id')]);
 		$minpercent = School::findOne(['id'=>$wish])->minpercent;
-		if($user->money >= $minpercent)
+		if($user->money >= $minpercent*$wish->totalMoney)
 		{
 			$wish->fromWho = $user->id;
 			$wish->fromClass = null;

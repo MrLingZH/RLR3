@@ -13,6 +13,8 @@ use app\models\RelationshipBanjiMates;
 use app\models\Vote;
 use app\models\Wish;
 use app\models\Trade;
+use app\models\InviteForm;
+use app\models\Invite;
 
 class BanjiController extends Controller
 {
@@ -28,10 +30,11 @@ class BanjiController extends Controller
                     'mybanjidetail',
                     'banjimates',
                     'tradelist',
+                    'invite',
                 ],
                 'rules' => [
                     [
-                        'actions' => ['create','mybanji','banjiincludeme','mybanjidetail'],
+                        'actions' => ['create','mybanji','banjiincludeme','mybanjidetail','invite'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -168,7 +171,7 @@ class BanjiController extends Controller
 		//$mates->id 		自增长的id
 		//$mates->banji 	班级id
 		//$mates->mates 	成员的id
-		if($mates = RelationshipBanjiMates::findAll(['banji'=>$banji->id]))
+		if($mates = RelationshipBanjiMates::find()->where(['banji'=>$banji->id])->orderBy(['id'=>SORT_ASC])->all())
 		{
 			//将查询到的关系加工成成员信息
 			foreach($mates as $key => $value)
@@ -218,6 +221,51 @@ class BanjiController extends Controller
 		return $this->render('tradelist',[
 			'provider'=>$provider,
 			'banjiid'=>$banjiid,
+		]);
+	}
+
+	public function actionInvite()
+	{	
+		if(!$banji = Banji::findOne(['id'=>Yii::$app->request->get('id')]))return $this->redirect(['site/appcenter']);
+		if(!$banji->isAdministrator(Yii::$app->user->identity->id))return $this->redirect(['site/appcenter']);
+		$model = new InviteForm;
+		$model->banji = $banji;
+
+		if($model->load(Yii::$app->request->post()) && $model->validate())
+		{
+			if($model->send())Yii::$app->session->setFlash('succeed');
+			else Yii::$app->session->setFlash('failed');
+		}
+
+		return $this->render('invite',['model'=>$model]);
+	}
+
+	public function actionInvited()
+	{
+		if(!$banji = Banji::findOne(['id'=>Yii::$app->request->get('id')]))return $this->redirect(['site/appcenter']);
+		if(!$banji->isAdministrator(Yii::$app->user->identity->id))return $this->redirect(['site/appcenter']);
+
+		$invitations =Invite::find()->where(['fromClass'=>$banji->id])->orderBy(['sendTime'=>SORT_DESC])->all();
+
+		if($invitations)
+		{
+			foreach($invitations as $v)
+			{
+				$t_user = User::findOne(['id'=>$v->toWho]);
+				$v->toWho = $t_user->username;
+				$v->email = $t_user->email;
+			}
+		}
+
+		$provider = new \yii\data\ArrayDataProvider([
+                        'allModels' => $invitations,
+                        'pagination' => ['pageSize' => 10],
+                        'key' => 'id',
+                    ]);
+
+		return $this->render('invited',[
+			'provider'=>$provider,
+			'banjiid'=>$banji->id,
 		]);
 	}
 

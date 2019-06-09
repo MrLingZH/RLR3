@@ -14,6 +14,7 @@ use Yii;
  * @property string $content
  * @property int $status 0=未读，1=已读
  * @property string $sendTime 发送时间
+ * @property int $invite 默认为null表示非邀请信，如果是邀请信则记录invite表相应字段的id
  */
 class Message extends \yii\db\ActiveRecord
 {
@@ -31,7 +32,7 @@ class Message extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['fromWho', 'toWho', 'status'], 'integer'],
+            [['fromWho', 'toWho', 'status','invite'], 'integer'],
             [['sendTime'], 'safe'],
             [['title', 'content'], 'string', 'max' => 255],
         ];
@@ -50,6 +51,7 @@ class Message extends \yii\db\ActiveRecord
             'content' => 'Content',
             'status' => 'Status',
             'sendTime' => 'Send Time',
+            'invite' => 'Invite',
         ];
     }
 
