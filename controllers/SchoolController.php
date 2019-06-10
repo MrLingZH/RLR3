@@ -17,12 +17,24 @@ class SchoolController extends Controller
                 'class' => AccessControl::className(),
                 'only' => [
                     'view',
+                    'setminpercent',
+                    'updatebywitness',
                 ],
                 'rules' => [
                     [
                         'actions' => ['view'],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['setminpercent','updatebywitness'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function($rule,$action)
+                        {
+                            $user = Yii::$app->user->identity;
+                            return $user->isWitness();
+                        }
                     ],
                 ],
             ],
@@ -36,5 +48,31 @@ class SchoolController extends Controller
 			'school'=>$school,
 		]);
 	}
+
+    public function actionSetminpercent()
+    {
+        $user = Yii::$app->user->identity;
+        $school = School::findOne(['witnessid'=>$user->id]);   
+        if($school->load(Yii::$app->request->post()) && $school->save())
+        {       
+            Yii::$app->session->setFlash('SetSchoolMinpercentSuccess');
+        }
+        return $this->render('setminpercent', [       
+            'model' => $school,       
+        ]);       
+    }
+
+    public function actionUpdatebywitness()
+    {
+        $model = School::findOne(['witnessid'=>Yii::$app->user->identity->id]);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save())
+        {
+            return $this->redirect(['view','id'=>$model->id]);
+        }
+        return $this->render('updatebywitness',[
+            'model' => $model,
+        ]);
+    }
 }
 ?>

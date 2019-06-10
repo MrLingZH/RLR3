@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $school['name'];
 $schoolAdmin = User::findOne(['id'=>$school['witnessid']]);
 if(Yii::$app->user->identity->school == $schoolAdmin->id)
 {
-	echo Html::a('完善社区资料', ['school/updatebywitness'], ['class' => 'btn btn-success btn-sm']).'&nbsp'; 
+	echo Html::a('修改社区资料', ['school/updatebywitness'], ['class' => 'btn btn-success btn-sm']).'&nbsp'; 
 	echo Html::a('设置资金比例', ['school/setminpercent'], ['class' => 'btn btn-success btn-sm']).'&nbsp'; 
 	echo Html::a('设置首页图片', ['school/upload_banner_image'], ['class' => 'btn btn-success btn-sm']); 
 }
