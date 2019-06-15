@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\models\Wish;
 
 /**
  * This is the model class for table "vote".
@@ -138,5 +139,41 @@ class Vote extends \yii\db\ActiveRecord
             }
         }
         return false;
+    }
+
+    //删除投票计划
+    public function deleteVote()
+    {
+        if($this->needers != null)
+        {
+            //将已选择计划投票的对象释放回愿望池
+            $needers = explode(',',$this->needers);
+            foreach($needers as $v)
+            {
+                $t_wish = Wish::findOne(['id'=>$v]);
+                $t_wish->status = 0;
+                $t_wish->save();
+            }
+        }
+        //$this->status = 3;
+        $this->delete();
+    }
+
+    //清除逾期的投票计划
+    public static function clearVoteWithOverdue()
+    {
+        $vote = self::findAll(['status'=>0]);
+        $result = [0=>0,1=>0];
+        foreach($vote as $v)
+        {
+            $date = date('Y-m-d H:i:s');
+            if(strtotime($date) > strtotime($v->endTime))
+            {
+                $v->needers = null;
+                $v->deleteVote();
+                $result[1] += 1;
+            }
+        }
+        return $result;
     }
 }

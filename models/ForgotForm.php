@@ -53,9 +53,16 @@ class ForgotForm extends Model
     public function validateCode($attribute, $params)
     {
         $user = User::findByEmail($this->email);
-        if (!$this->hasErrors()) {
-            if($this->code == null || $user->verifyCode != $this->code){
+        $overtime = 60 * 15;//验证码过期时间，单位秒。
+        if (!$this->hasErrors())
+        {
+            if($this->code == null || $user->verifyCode != $this->code)
+            {
                 $this->addError($attribute,'验证码不正确！');
+            }
+            else if(strtotime(date('Y-m-d H:i:s')) > strtotime($user->verifyCodeSendTime)+$overtime)
+            {
+            	$this->addError($attribute,'验证码已过期！');
             }
         }
     }

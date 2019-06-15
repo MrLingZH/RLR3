@@ -81,34 +81,13 @@ class MoneyController extends Controller
 
 		if($model->load(Yii::$app->request->post()))
 		{
-			$fromWho = User::findOne(['id'=>Yii::$app->user->identity->id]);
 			$toWho = User::findOne(['username'=>$model->toWho]);
 			$trade = new Trade;
-			$trade->money = $model->money;
-			$trade->toWho = $toWho->id;
-			$trade->fromWho = $fromWho->id;
-			$trade->way = 1;//用余额转账
-			$trade->type = 1;//转账
-			$trade->status = 1;//临时
-			//$trade->transaction_id = '';
-			$trade->tradeTime = date('Y-m-d H:i:s');
-			if($trade->save())
+			if($trade->transferToPerson(Yii::$app->user->identity->id,$toWho->id,$model->money))
 			{
-				$fromWho->money -= $model->money;
-				$toWho->money += $model->money;
-				if($fromWho->save())
-				{
-					if($toWho->save())
-					{
-						return $this->render('succeed');
-					}
-					$fromWho->money += $model->money;
-					$fromWho->save();
-					return $this->render('failed',['status'=>3]);
-				}
-				return $this->render('failed',['status'=>1]);
+				return $this->render('succeed');
 			}
-			return $this->render('failed',['status'=>2]);
+			return $this->render('error',['message'=>'余额不足']);
 		}
 
 		return $this->render('transfer',['model'=>$model]);
@@ -121,34 +100,13 @@ class MoneyController extends Controller
 
 		if($model->load(Yii::$app->request->post()))
 		{
-			$fromWho = User::findOne(['id'=>Yii::$app->user->identity->id]);
 			$toClass = Banji::findOne(['id'=>$model->toClass]);
 			$trade = new Trade;
-			$trade->money = $model->money;
-			$trade->toClass = $model->toClass;
-			$trade->fromWho = $fromWho->id;
-			$trade->way = 1;//用余额转账
-			$trade->type = 1;//转账
-			$trade->status = 1;//临时
-			//$trade->transaction_id = '';
-			$trade->tradeTime = date('Y-m-d H:i:s');
-			if($trade->save())
+			if($trade->transferToClass(Yii::$app->user->identity->id,$model->toClass,$model->money))
 			{
-				$fromWho->money -= $model->money;
-				$toClass->money += $model->money;
-				if($fromWho->save())
-				{
-					if($toClass->save())
-					{
-						return $this->render('succeed');
-					}
-					$fromWho->money += $model->money;
-					$fromWho->save();
-					return $this->render('failed',['status'=>3]);
-				}
-				return $this->render('failed',['status'=>1]);
+				return $this->render('succeed');
 			}
-			return $this->render('failed',['status'=>2]);
+			return $this->render('error',['message'=>'余额不足']);
 		}
 
 		return $this->render('transfer',['model'=>$model]);

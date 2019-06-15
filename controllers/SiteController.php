@@ -232,7 +232,9 @@ class SiteController extends Controller
 
     public function actionGet_verify_code()
     {
-        if(!($type = Yii::$app->request->get('type') && $email = Yii::$app->request->post('email')))return $this->redirect(['index']);
+        $type = Yii::$app->request->get('type');
+        $email = Yii::$app->request->post('email');
+        if(!$type || !$email)return $this->redirect(['index']);
         $user = User::findOne(['email'=>$email]);
         switch($type)
         {

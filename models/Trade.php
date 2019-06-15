@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use app\models\User;
+use app\models\Banji;
 
 /**
  * This is the model class for table "trade".
@@ -59,5 +61,68 @@ class Trade extends \yii\db\ActiveRecord
             'transaction_id' => 'Transaction_id',
             'tradeTime' => 'Trade Time',
         ];
+    }
+
+    public function transferToPerson($fromWho,$toWho,$money)
+    {
+        $fromWho = User::findOne(['id'=>$fromWho]);
+        if($fromWho->money < $money || $money < 1)return false;
+        $toWho = User::findOne(['id'=>$toWho]);
+        $this->money = $money;
+        $this->toWho = $toWho->id;
+        $this->fromWho = $fromWho->id;
+        $this->way = 1;//用余额转账
+        $this->type = 1;//转账
+        $this->status = 1;
+        //$this->transaction_id = '';
+        $this->tradeTime = date('Y-m-d H:i:s');
+        $this->save();
+        $fromWho->money -= $money;
+        $fromWho->save();
+        $toWho->money += $money;
+        $toWho->save();
+        return true;
+    }
+
+    public function transferToClass($fromWho,$toClass,$money)
+    {
+        $fromWho = User::findOne(['id'=>$fromWho]);
+        if($fromWho->money < $money || $money < 1)return false;
+        $toClass = Banji::findOne(['id'=>$toClass]);
+        $this->money = $money;
+        $this->toClass = $toClass->id;
+        $this->fromWho = $fromWho->id;
+        $this->way = 1;//用余额转账
+        $this->type = 1;//转账
+        $this->status = 1;
+        //$this->transaction_id = '';
+        $this->tradeTime = date('Y-m-d H:i:s');
+        $this->save();
+        $fromWho->money -= $money;
+        $fromWho->save();
+        $toClass->money += $money;
+        $toClass->save();
+        return true;
+    }
+
+    public function transfer_ClassToPerson($fromClass,$toWho,$money)
+    {
+        $fromClass = Banji::findOne(['id'=>$fromClass]);
+        if($fromClass->money < $money || $money < 1)return false;
+        $toWho = User::findOne(['id'=>$toWho]);
+        $this->money = $money;
+        $this->toWho = $toWho->id;
+        $this->fromClass = $fromClass->id;
+        $this->way = 1;//用余额转账
+        $this->type = 1;//转账
+        $this->status = 1;
+        //$this->transaction_id = '';
+        $this->tradeTime = date('Y-m-d H:i:s');
+        $this->save();
+        $fromClass->money -= $money;
+        $fromClass->save();
+        $toWho->money += $money;
+        $toWho->save();
+        return true;
     }
 }

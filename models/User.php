@@ -26,6 +26,7 @@ use yii\web\IdentityInterface;
  * @property string $idcard_downside
  * @property string $register_time
  * @property string $verifyCode
+ * @property string $verifyCodeSendTime
  */
 class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
@@ -55,7 +56,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return [
             [['isVerfied', 'money', 'audit_school', 'reg_school', 'school'], 'integer'],
-            [['register_time'], 'safe'],
+            [['register_time','verifyCodeSendTime'], 'safe'],
             [['username','nickname', 'email', 'password', 'sex', 'degree', 'headimage', 'tel', 'idcard_upside', 'idcard_downside', 'verifyCode'], 'string', 'max' => 255],
         ];
     }
@@ -84,6 +85,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             'idcard_downside' => 'Idcard Downside',
             'register_time' => 'Register Time',
             'verifyCode' => 'Verify Code',
+            'verifyCodeSendTime' => 'verifyCodeSendTime',
         ];
     }
 
@@ -130,6 +132,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function updateVerifyCode()
     {
         $this->verifyCode = (string)mt_rand(10000,99999);
+        $this->verifyCodeSendTime = date('Y-m-d H:i:s');
         $this->save();
     }
 
@@ -137,7 +140,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
         $to = $this->email;
         $subject = "《人恋人公益平台》注册码";
-        $body = "亲爱的".$this->email."您好，这是您的注册验证码：".$this->verifyCode."。感谢您的注册！";
+        $body = "亲爱的".$this->email."您好，这是您的注册验证码：<font style='color:#55f'>".$this->verifyCode."</font>，验证码在15分钟内有效，感谢您的注册！";
 
         $mail = Yii::$app->mailer->compose(); //加载配置的组件
         $mail->setTo($to); //要发给谁
@@ -150,7 +153,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
         $to = $this->email;
         $subject = "《人恋人公益平台》密码找回验证码";
-        $body = "亲爱的".$this->email."您好，这是您的密码找回验证码：".$this->verifyCode."。如果这不是您本人的操作，请注意您的账号安全,切勿将验证码泄露！";
+        $body = "亲爱的".$this->email."您好，这是您的密码找回验证码：<font style='color:#55f'>".$this->verifyCode."</font>，验证码在15分钟内有效，如果这不是您本人的操作，请注意您的账号安全，切勿将验证码泄露！";
 
         $mail = Yii::$app->mailer->compose();
         $mail->setTo($to);

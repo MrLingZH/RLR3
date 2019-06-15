@@ -3,6 +3,10 @@
 namespace app\models;
 
 use Yii;
+use app\models\Trade;
+use app\models\Message;
+use app\models\User;
+use app\models\Banji;
 
 /**
  * This is the model class for table "wish".
@@ -106,18 +110,21 @@ class Wish extends \yii\db\ActiveRecord
 EOF;
 
     $rest = "";
-    for($i=$this->sentCount*($this->donateinterval);$i<$this->count;$i=$i+$this->donateinterval)
+    for($i=1;$i<$this->count;$i++)
     {
-        $date=date("Y-m-d",$this->donatetime + strtotime('+'.($i * $this->donateinterval).' month'));
-        if($i==$this->sentCount)
+        $date=date("Y-m-d",strtotime($this->donatetime.'+'.($i * $this->donateinterval).' month'));//划款日期，到了该日期系统自动转账。
+        if($i > $this->sentCount)//未划款的期
         {
-            $class="progress-bar-danger active";
+            if($date <= date('Y-m-d'))//已到达划款日的期
+            {
+                $class="progress-bar-danger active";
+            }
+            else//还未到划款日的期
+            {
+                $class = "progress-bar-warning ";
+            }
+            $rest.="<div class=\"progress-bar progress-bar-striped $class\" role=\"progressbar\" style=\"width:$needtoPercent%\">$date</div>";
         }
-        else
-        {
-            $class = "progress-bar-warning ";
-        }
-        $rest.="<div class=\"progress-bar progress-bar-striped $class\" role=\"progressbar\" style=\"width:$needtoPercent%\">$date</div>";
     }
 
     $rlt = <<<EOF
@@ -135,5 +142,125 @@ EOF;
     {
         if($schoolWithUser == $this->school)return true;
         return false;
+    }
+
+    //获取需要划款的期数
+    public function getNeedTransferCount()
+    {
+        $needTransferCount = 0;
+        for($i=1;$i<$this->count;$i++)
+        {
+            $date=date("Y-m-d",strtotime($this->donatetime.'+'.($i * $this->donateinterval).' month'));//划款日期，到了该日期系统自动转账。
+            if($i > $this->sentCount)//未划款的期
+            {
+                if($date <= date('Y-m-d'))//已到达划款日的期
+                {
+                    $needTransferCount += 1;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+        return $needTransferCount;
+    }
+
+    //定时执行，查询该划款的心愿，自动划款。
+    public static function transferToWish()
+    {
+        $result = [0=>0,1=>0];
+        $wish = self::findAll(['status'=>3]);
+        foreach($wish as $v)
+        {
+            $needTransferCount = $v->getNeedTransferCount();
+            if($needTransferCount > 0)
+            {
+                for($i=1;$i<=$needTransferCount;$i++)//循环处理每一期
+                {
+                    $trade = new Trade;
+                    if(isset($v->fromWho))//判断是个人资助还是团体资助
+                    {
+                        if($trade->transfertoperson($v->fromWho,$v->toWho,$v->totalMoney/$v->count))
+                        {
+                            $v->sendMessage_transferSucceed();//发送消息提醒
+                            $v->sentCount += 1;
+                            $v->save();
+                            $result[1] += 1;
+                        }
+                        else//余额不足
+                        {
+                            $v->sendMessage_transferFailed();//发送消息催促充钱
+                            $result[0] += 1;
+                        }
+                    }
+                    else
+                    {
+                        if($trade->transfer_ClassToPerson($v->fromClass,$v->toWho,$v->totalMoney/$v->count))
+                        {
+                            $v->sendMessage_transferSucceed();
+                            $v->sentCount += 1;
+                            $v->save();
+                            $result[1] += 1;
+                        }
+                        else//余额不足
+                        {
+                            $v->sendMessage_transferFailed();
+                            $result[0] += 1;
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    public function sendMessage_transferSucceed()
+    {
+        $toWho = User::findOne(['id'=>$this->toWho]);
+        if(isset($this->fromWho))
+        { 
+            $fromWho = User::findOne(['id'=>$this->fromWho]);
+            $body = $toWho->nickname.'你好，你已收到来自个人<font style="color:green">'.$fromWho->username.'</font>的资助款'.$this->totalMoney/$this->count.'元。';
+        }
+        else
+        {
+            $fromClass = Banji::findOne(['id'=>$this->fromClass]);
+            $fromWho = User::findOne(['id'=>$fromClass->administrator]);
+            $body = $toWho->nickname.'你好，你已收到来自团体<font style="color:green">'.$fromClass->name.'</font>的资助款'.$this->totalMoney/$this->count.'元。';
+        }
+        $mail= Yii::$app->mailer->compose();
+        $mail->setTo($toWho->email);  
+        $mail->setSubject("人恋人平台资助款到账通知");
+        $mail->setHtmlBody($body);
+        $mail->send();
+
+        //发给捐款方的
+        $body = $fromWho->nickname.'你好，系统已自动完成心愿资助划款，收款方为<font style="color:green">'.$toWho->nickname.'</font>。划款：'.$this->totalMoney/$this->count.'元。';
+        $mail= Yii::$app->mailer->compose();
+        $mail->setTo($fromWho->email);  
+        $mail->setSubject("人恋人平台自动划款通知");
+        $mail->setHtmlBody($body);
+        $mail->send();
+    }
+    public function sendMessage_transferFailed()
+    {
+        $toWho = User::findOne(['id'=>$this->toWho]);
+        if(isset($this->fromWho))
+        { 
+            $fromWho = User::findOne(['id'=>$this->fromWho]);
+            $body = $fromWho->nickname.'你好，你的余额不足以为<font style="color:green">'.$toWho->nickname.'</font>划款：'.$this->totalMoney/$this->count.'元，请及时充值以继续资助计划。';
+        }
+        else
+        {
+            $fromClass = Banji::findOne(['id'=>$this->fromClass]);
+            $fromWho = User::findOne(['id'=>$fromClass->administrator]);
+            $body = $fromWho->nickname.'你好，你的团体余额不足以为<font style="color:green">'.$toWho->nickname.'</font>划款：'.$this->totalMoney/$this->count.'元，请为团体充值以继续资助计划。';
+        }
+        $mail= Yii::$app->mailer->compose();
+        $mail->setTo($fromWho->email);  
+        $mail->setSubject("人恋人平台资助资金不足通知");
+        $mail->setHtmlBody($body);
+        $mail->send();
     }
 }

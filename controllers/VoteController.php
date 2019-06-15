@@ -200,19 +200,7 @@ class VoteController extends Controller
 		$user = Yii::$app->user->identity;
 		if(!$banji->isAdministrator($user->id))return $this->redirect(['site/appcenter']);
 
-		if($vote->needers != null)
-		{
-			$needers = explode(',',$vote->needers);
-			foreach($needers as $v)
-			{
-				$t_wish = Wish::findOne(['id'=>$v]);
-				$t_wish->status = 0;
-				$t_wish->save();
-			}
-		}
-
-		$vote->status = 3;
-		$vote->save();
+		$vote->deleteVote();
 		
 		return $this->redirect(['banji/banjimates','id'=>$banji->id]);
 	}
