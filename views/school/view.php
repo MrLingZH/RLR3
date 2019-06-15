@@ -34,7 +34,9 @@ else if(Yii::$app->user->identity->isAdmin())
     'model' => $school,
     'attributes' => [
     	'name',
-    	['label'=>'二级域名','value'=>$school['subDomain'],'format'=>['url',['target'=>'_blank']]],
+        ['label'=>'二级域名','value'=>$school['subDomain'],'format'=>['url',['target'=>'_blank']]],
+        ['label'=>'社区代码','value'=>$school['schoolnumber']],
+    	['label'=>'资金比例','value'=>$school['minpercent']],
     	'address',
     	'type',
         ['label'=>'社区管理员','value'=>$schoolAdmin->username],

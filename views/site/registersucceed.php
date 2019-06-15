@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			}
 			else if(Yii::$app->controller->action == 'register_school')
 			{
-				echo "恭喜你成功注册成为人恋人平台见证人！";
+				echo "恭喜你成功注册成为人恋人平台见证人！请在登录后前往应用中心下载审核书模板，并填写提交审核书，进一步等待管理员审核验证，只有通过审核，社区才能正式成立！";
 			}
 		?>
 	</p>

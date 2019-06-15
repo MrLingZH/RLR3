@@ -105,6 +105,37 @@ class AdminController extends Controller
 
 		return $this->render('disagreed',['model'=>$model]);
 	}
+
+	public function actionSupply_list()
+	{
+		$result = Yii::$app->request->get('result');
+		if(!($result >= 0 && $result <= 2))return $this->redirect(['site/appcenter']);
+		switch($result)
+		{
+			case 0:
+				$school = School::find()->where(['registerresult'=>0])->orderBy(['registertime'=>SORT_DESC])->all();
+				$title = '待审核';
+				break;
+			case 1:
+				$school = School::find()->where(['registerresult'=>1])->orderBy(['registertime'=>SORT_DESC])->all();
+				$title = '审核通过';
+				break;
+			case 2:
+				$school = School::find()->where(['registerresult'=>2])->orderBy(['registertime'=>SORT_DESC])->all();
+				$title = '审核未通过';
+				break;
+		}
+		
+        $provider = new \yii\data\ArrayDataProvider([
+                            'allModels' => $school,
+                            'pagination' => ['pageSize' => 10],
+                            'key' => 'id',
+                        ]);
+		return $this->render('supply_list',[
+			'provider'=>$provider,
+			'title0'=>$title,
+		]);
+	}
 }
 
 

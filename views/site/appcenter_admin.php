@@ -29,11 +29,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     <a href=<?=Url::to(['message/write'])?> class="list-group-item"> 发送站内信</a>
                     <a href=<?=Url::to(['event/indextome'])?> class="list-group-item">我的审批</a>
                     <a href=<?=Url::to(['news/fillinnewsbyadmin'])?> class="list-group-item"> 首页信息发布</a> 
-                    <a href=<?=Url::to(['event/eventlist','result'=>'unjudge'])?> class="list-group-item">
+                    <a href=<?=Url::to(['admin/supply_list','result'=>0])?> class="list-group-item">
                         <span class="badge"><?= $count['status0'] ?></span>待审批</a>
-                    <a href=<?=Url::to(['event/eventlist','result'=>'disagreed'])?> class="list-group-item">
-                        <span class="badge"><?= $count['status2'] ?></span>审核未通过</a>  
-                    <a href=<?=Url::to(['event/eventlist','result'=>'agreed'])?> class="list-group-item">
+                    <a href=<?=Url::to(['admin/supply_list','result'=>2])?> class="list-group-item">
+                        <span class="badge"><?= $count['status2'] ?></span>审核未通过</a>
+                    <a href=<?=Url::to(['admin/supply_list','result'=>1])?> class="list-group-item">
                         <span class="badge"><?= $count['status1'] ?></span>审核通过</a>  
                     <a href=<?=Url::to(['site/getcurrentuserdata'])?> class="list-group-item">个人资料</a>
                     <a href=<?=Url::to(['template/list'])?> class="list-group-item">
@@ -100,7 +100,7 @@ function printtablebody($column1,$column2,$column3,$column4,$column5,$column6,$c
                            '.Html::a('修改申请', Url::to(['school/update','id'=>$column6]),['class' => 'btn btn-success btn-xs']).'
                         </td>
                         <td>
-                           '.Html::a('承诺书', Url::to(['site/viewcertificate','id'=>$column1]),['class' => 'btn btn-success btn-xs']).'
+                           '.Html::a('承诺书', Url::to(['school/viewcertificate','id'=>$column1]),['class' => 'btn btn-success btn-xs']).'
                         </td>
                         <td>
                             '.Html::a('同意', Url::to(['admin/agreed_apply_school','id'=>$column1]),['class' => 'btn btn-success btn-xs']).'

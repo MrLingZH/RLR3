@@ -452,6 +452,12 @@ class SiteController extends Controller
     public function actionUploadcertificate()
     {
         $user = Yii::$app->user->identity;
+        $school = School::findOne(['id'=>$user->audit_school]);
+        if($school->registerresult == 1)//已经通过审核就没必要再上传了。
+        {
+            Yii::$app->session->setFlash('Haved upload.');
+            return $this->redirect(['appcenter']);
+        }
         $model = new UploadCertificate;
         $model->userid = $user->id;
         if($model->load($_POST) && $model->file = UploadedFile::getInstance($model,'file'))

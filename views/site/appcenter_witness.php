@@ -137,6 +137,10 @@ printtableend();
 echo yii\widgets\LinkPager::widget([
     'pagination' => $pages,
 ]);
+if(Yii::$app->session->hasFlash('Haved upload.'))
+{
+    $this->registerJs('alert("已经通过审核就没必要再上传了。")');
+}
 ?>
         </div>
     </div>

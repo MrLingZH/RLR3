@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\web\UploadedFile;
 use app\models\WishForm;
 use app\models\School;
 use app\models\Wish;
@@ -12,6 +13,7 @@ use app\models\User;
 use app\models\SimpleForm;
 use app\models\Message;
 use app\models\Banji;
+use app\models\UploadProtocol;
 
 class DonateController extends Controller
 {
@@ -32,10 +34,12 @@ class DonateController extends Controller
                     'donate',
                     'mydonation',
                     'update_wish_status',
+                    'uploadprotocol',
+                    'viewprotocol',
                 ],
                 'rules' => [
                     [
-                        'actions' => ['wish_supply_list','editwish'],
+                        'actions' => ['wish_supply_list','editwish','Viewprotocol'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -50,7 +54,7 @@ class DonateController extends Controller
                         }
                     ],
                     [
-                        'actions' => ['wish_agreed','wish_disagreed','wish_delete','update_wish_status'],
+                        'actions' => ['wish_agreed','wish_disagreed','wish_delete','update_wish_status','uploadprotocol'],
                         'allow' => true,
                         'roles' => ['@'],
                         'matchCallback' => function($rule,$action)
@@ -452,6 +456,33 @@ class DonateController extends Controller
 				break;
 		}
 		return $this->render('succeed_update');
+	}
+
+	//上传协议书
+	public function actionUploadprotocol()
+    {
+    	if(!$wishid = Yii::$app->request->get('id'))return $this->rediret(['site/appcenter']);
+        $user = Yii::$app->user->identity;
+        $model = new UploadProtocol;
+        $model->userid = $user->id;
+        $model->wishid = $wishid;
+        if($model->load($_POST) && $model->file = UploadedFile::getInstance($model,'file'))
+        {
+            if($model->validate() && $model->upload())
+            {
+                Yii::$app->session->setFlash('PictureUploaded');
+            }
+        }
+        return $this->render('uploadprotocol', ['model' => $model]);
+    }
+
+	//查看协议书
+	public function actionViewprotocol()
+	{
+		if(!$wish = Wish::findOne(['id'=>Yii::$app->request->get('id')]))return $this->rediret(['site/appcenter']);
+		$auditor = User::findOne(['id'=>$wish->auditor]);
+		$path = 'upload_user/'.$auditor->email.'/protocol/'.$wish->id;
+		return $this->render('viewprotocol',['path'=>$path]);
 	}
 
 }

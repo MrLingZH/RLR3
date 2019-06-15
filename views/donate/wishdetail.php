@@ -33,13 +33,13 @@ else if((Yii::$app->user->identity->degree != 'auditor') && (Yii::$app->user->id
 	echo '<h2>状态: '.$trans_status[$wish['status']].'</h2>';
 }
 echo '<br>';
-if((Yii::$app->user->identity->id==$wish->auditor)&&(($wish->status =='in_progress')||($wish->status =='overdue')))
+if(Yii::$app->user->identity->username == $wish->auditor && $wish->status == 1)
 {
-echo Html::a('上传协议', Url::to(['donate/uploadprotocol','id'=>$wish['id']]),['class' => 'btn btn-primary', 'name' => 'view-button']);
+	echo Html::a('上传协议', Url::to(['donate/uploadprotocol','id'=>$wish['id']]),['class' => 'btn btn-primary', 'name' => 'view-button']);
 }
-if(($wish->status == 3) || ($wish->status == 4))
+if($wish->status == 1 || $wish->status == 3 || $wish->status == 4)
 {
-echo '&nbsp'.Html::a('查看协议', Url::to(['donate/viewprotocol','id'=>$wish['id']]),['class' => 'btn btn-primary', 'name' => 'view-button']);
+	echo '&nbsp'.Html::a('查看协议', Url::to(['donate/viewprotocol','id'=>$wish['id']]),['class' => 'btn btn-primary', 'name' => 'view-button']);
 }
 ?>
 

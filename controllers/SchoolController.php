@@ -19,10 +19,11 @@ class SchoolController extends Controller
                     'view',
                     'setminpercent',
                     'updatebywitness',
+                    'viewcertificate',
                 ],
                 'rules' => [
                     [
-                        'actions' => ['view'],
+                        'actions' => ['view','viewcertificate'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -73,6 +74,15 @@ class SchoolController extends Controller
         return $this->render('updatebywitness',[
             'model' => $model,
         ]);
+    }
+
+    //查看承诺书
+    public function actionViewcertificate()
+    {
+        if(!$school = School::findOne(['id'=>Yii::$app->request->get('id')]))return $this->rediret(['site/appcenter']);
+        $witness = User::findOne(['id'=>$school->witnessid]);
+        $path = 'upload_user/'.$witness->email.'/certificate/certificate';
+        return $this->render('viewcertificate',['path'=>$path]);
     }
 }
 ?>
