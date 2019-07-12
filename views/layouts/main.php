@@ -29,7 +29,7 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => Yii::$app->name,
+        'brandLabel' => '人恋人公益平台',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
@@ -74,7 +74,7 @@ AppAsset::register($this);
         <?php 
         if(Yii::$app->user->isGuest)
         {
-            echo '&nbsp<a href="./index?r=site/register_school">学校注册</a>';
+            echo '&nbsp<a href="./index.php?r=site/register_school">学校注册</a>';
         }
         ?>
         <p class="pull-right"><?= Yii::powered() ?></p>

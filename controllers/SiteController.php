@@ -12,7 +12,7 @@ use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\RegisterForm;
 use app\models\RegisterForm2;
-use app\models\RegisterForm_school;
+use app\models\RegisterForm_School;
 use app\models\EdituserdataForm;
 use app\models\User;
 use app\models\School;
